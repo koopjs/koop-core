@@ -26,9 +26,8 @@ function createKey (req) {
 }
 
 function isFresh (geojson) {
-  return geojson.metadata &&
-  geojson.metadata.expires &&
-  Date.now() < geojson.metadata.expires
+  if (!geojson || !geojson.metadata || !geojson.metadata.expires) return true
+  else return Date.now() < geojson.metadata.expires
 }
 
 module.exports = Model
