@@ -143,7 +143,7 @@ Koop.prototype._registerProvider = function (provider) {
 Koop.prototype._registerOutput = function (Output) {
   Util.inherits(Controller, Output)
   this.pluginRoutes = this.pluginRoutes.concat(Output.routes)
-  this.log.info('registered output:', Output.plugin_name, Output.version)
+  this.log.info('registered output:', Output.name, Output.version)
 }
 
 /**
