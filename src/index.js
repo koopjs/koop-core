@@ -188,7 +188,7 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes) {
     }
     route.methods.forEach(method => {
       try {
-        this.log.info(`provider=${provider.name} fullRoute:${fullRoute}`)
+        console.log(`provider=${provider.name} fullRoute:${fullRoute}`)
         server[method](fullRoute, controller[route.handler].bind(controller))
       } catch (e) {
         console.error(`error=controller does not contain specified method method=${method} path=${route.path} handler=${route.handler}`)
