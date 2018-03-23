@@ -75,6 +75,13 @@ function initServer () {
     req.query = _.extend(req.query || {}, req.body || {})
     next()
   })
+  // Trim trailing/leading whitespace from string param values;  
+  .use((req, res, next) => {
+    Object.keys(req.query).map(param=>{
+      req.query[param] = (typeof req.query[param] == 'string' || req.query[param] instanceof String) ? req.query[param].trim() : req.query[param];
+    });
+    next();
+  })
   // for demos and preview maps in providers
   .set('view engine', 'ejs')
   .use(express.static(path.join(__dirname, '/public')))
