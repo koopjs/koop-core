@@ -12,6 +12,7 @@ const Controller = require('./controllers')
 const Model = require('./models')
 const DatasetController = require('./controllers/dataset')
 const Dataset = require('./models/dataset')
+const middleware = require('./middleware')
 const Events = require('events')
 const Util = require('util')
 const path = require('path')
@@ -74,14 +75,8 @@ function initServer () {
     // request parameters can come from query url or POST body
     req.query = _.extend(req.query || {}, req.body || {})
     next()
-  })
-  // Trim trailing/leading whitespace from string param values;  
-  .use((req, res, next) => {
-    Object.keys(req.query).map(param=>{
-      req.query[param] = (typeof req.query[param] == 'string' || req.query[param] instanceof String) ? req.query[param].trim() : req.query[param];
-    });
-    next();
-  })
+  }) 
+  .use(middleware.paramTrim)
   // for demos and preview maps in providers
   .set('view engine', 'ejs')
   .use(express.static(path.join(__dirname, '/public')))
