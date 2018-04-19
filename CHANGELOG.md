@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+Unreleased
+### Added
+* Insert the provider-specifc route fragment into the route path (rather then simple prefixing), by replacing occurence of '$provider$' substring
+
 ## [3.5.5] - 2018-04-11
 ### Fixed
 * replace truthy operator
