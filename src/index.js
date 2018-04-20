@@ -186,7 +186,7 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes) {
   const name = provider.namespace || provider.plugin_name || provider.name
   const namespace = name.replace(/\s/g, '').toLowerCase()
   pluginRoutes.forEach(route => {
-    let fullRoute = helpers.composeRouteString(namespace, route.path, provider.hosts, provider.disableIdParam)
+    let fullRoute = helpers.composeRouteString(namespace, route.path, {hosts: provider.hosts, disableIdParam: provider.disableIdParam, skipDecoration: route.skipDecoration})
     route.methods.forEach(method => {
       try {
         console.log(`provider=${provider.name} fullRoute:${fullRoute}`)

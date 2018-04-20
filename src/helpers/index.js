@@ -4,15 +4,17 @@ const path = require('path')
  * Compose route string based on inputs and options
  * @param {string} namespace - namespace for the route
  * @param {string} routePath - initial route pathfragment
- * @param {boolean} hosts - flag determining inclusion of :host in route
- * @param {boolean} disableIdParam - flag determining omission of :id in route (when hosts=false)
+ * @param {object} options - options object with decoration flags
  */
-function composeRouteString(namespace, routePath, hosts = false, disableIdParam = false) {
+function composeRouteString(routePath, namespace, opts) {
+  let options = opts || {}
   let routeFragment
+
+  if(options.skipDecoration) return path.posix.join('/', routePath)
   // Build route fragment
-  if (hosts) {
+  if (options.hosts) {
     routeFragment = path.posix.join(namespace, ':host', ':id')
-  } else if (disableIdParam) {
+  } else if (options.disableIdParam) {
     routeFragment = path.posix.join(namespace)
   } else {
     routeFragment = path.posix.join(namespace, ':id')
