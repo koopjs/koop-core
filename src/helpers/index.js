@@ -10,7 +10,7 @@ function composeRouteString(routePath, namespace, opts) {
   let options = opts || {}
   let routeFragment
 
-  if(options.skipDecoration) return path.posix.join('/', routePath)
+  if(options.absolutePath) return path.posix.join('/', routePath)
   // Build route fragment
   if (options.hosts) {
     routeFragment = path.posix.join(namespace, ':host', ':id')

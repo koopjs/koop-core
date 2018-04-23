@@ -27,7 +27,7 @@ describe('Tests for helper functions', function () {
     })
 
     it('create route without decoration', function () {
-      let fullRoute = helpers.composeRouteString('rest/info','test', {skipDecoration: true})
+      let fullRoute = helpers.composeRouteString('rest/info','test', {absolutePath: true})
       fullRoute.should.equal('/rest/info')
     })
 
