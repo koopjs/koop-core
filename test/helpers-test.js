@@ -36,6 +36,11 @@ describe('Tests for helper functions', function () {
       fullRoute.should.equal('/test/:id/rest/services/FeatureServer/:layer/:method')
     })
 
+    it('create route with templated $namespace$ substring', function () {
+      let fullRoute = helpers.composeRouteString('$providerParams$/rest/services/FeatureServer/:layer/:method','test')
+      fullRoute.should.equal('/test/:id/rest/services/FeatureServer/:layer/:method')
+    })
+
     it('create route without decoration', function () {
       let fullRoute = helpers.composeRouteString('rest/info','test', {absolutePath: true})
       fullRoute.should.equal('/rest/info')

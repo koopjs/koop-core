@@ -23,6 +23,8 @@ function composeRouteString(routePath, namespace, opts) {
     return path.posix.join('/', routePath.replace('$namespace$', namespace).replace('$providerParams$', paramFragment))
   } else if (routePath.includes('$namespace$')) {
     return path.posix.join('/', routePath.replace('$namespace$', path.posix.join(namespace, paramFragment)))
+  } else if (routePath.includes('$providerParams$')) {
+    return path.posix.join('/', namespace, routePath.replace('$providerParams$', paramFragment))
   } else {
     return path.posix.join('/', namespace, paramFragment, routePath)
   }
