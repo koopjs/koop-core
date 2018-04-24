@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 * helper module and function to create route paths with decoration based on passed options
-* Insert the provider-specifc route fragment into the route path (rather then simple prefixing), by replacing occurence of '$provider$' substring
+* Option to insert the provider-specifc route fragments into the route path (rather then simple prefixing), by replacing occurence of '$namespace$' and '$providerParams$' substring
 
 ## [3.5.5] - 2018-04-11
 ### Fixed
