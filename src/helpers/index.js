@@ -10,6 +10,8 @@ function composeRouteString(routePath, namespace, opts) {
   let options = opts || {}
   let modifiedPath
   let paramFragment = ''
+  const paramsPlaceholder = '$providerParams'
+  const namespacePlaceholder = '$namespace'
 
   // No compostion needed if flagged as an absolute route
   if(options.absolutePath) return path.posix.join('/', routePath)
@@ -19,12 +21,12 @@ function composeRouteString(routePath, namespace, opts) {
   else if (!options.disableIdParam) paramFragment = path.posix.join(':id')
 
   // Replace placehold substrings if present, fallback to namespace/:host/:id
-  if (routePath.includes('$namespace$') && routePath.includes('$providerParams$')) {
-    return path.posix.join('/', routePath.replace('$namespace$', namespace).replace('$providerParams$', paramFragment))
-  } else if (routePath.includes('$namespace$')) {
-    return path.posix.join('/', routePath.replace('$namespace$', path.posix.join(namespace, paramFragment)))
-  } else if (routePath.includes('$providerParams$')) {
-    return path.posix.join('/', namespace, routePath.replace('$providerParams$', paramFragment))
+  if (routePath.includes(namespacePlaceholder) && routePath.includes(paramsPlaceholder)) {
+    return path.posix.join('/', routePath.replace(namespacePlaceholder, namespace).replace(paramsPlaceholder, paramFragment))
+  } else if (routePath.includes(namespacePlaceholder)) {
+    return path.posix.join('/', routePath.replace(namespacePlaceholder, path.posix.join(namespace, paramFragment)))
+  } else if (routePath.includes(paramsPlaceholder)) {
+    return path.posix.join('/', namespace, routePath.replace(paramsPlaceholder, paramFragment))
   } else {
     return path.posix.join('/', namespace, paramFragment, routePath)
   }

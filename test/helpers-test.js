@@ -22,22 +22,22 @@ describe('Tests for helper functions', function () {
     })
 
     it('create route with templated $namespace$ and $providerParams$ substrings', function () {
-      let fullRoute = helpers.composeRouteString('$namespace$/rest/services/$providerParams$/FeatureServer/:layer/:method','test', {hosts: true})
+      let fullRoute = helpers.composeRouteString('$namespace/rest/services/$providerParams/FeatureServer/:layer/:method','test', {hosts: true})
       fullRoute.should.equal('/test/rest/services/:host/:id/FeatureServer/:layer/:method')
     })
 
     it('create route with templated $namespace$ substring', function () {
-      let fullRoute = helpers.composeRouteString('$namespace$/rest/services/FeatureServer/:layer/:method','test', {disableIdParam: true})
+      let fullRoute = helpers.composeRouteString('$namespace/rest/services/FeatureServer/:layer/:method','test', {disableIdParam: true})
       fullRoute.should.equal('/test/rest/services/FeatureServer/:layer/:method')
     })
 
     it('create route with templated $namespace$ substring', function () {
-      let fullRoute = helpers.composeRouteString('$namespace$/rest/services/FeatureServer/:layer/:method','test')
+      let fullRoute = helpers.composeRouteString('$namespace/rest/services/FeatureServer/:layer/:method','test')
       fullRoute.should.equal('/test/:id/rest/services/FeatureServer/:layer/:method')
     })
 
     it('create route with templated $namespace$ substring', function () {
-      let fullRoute = helpers.composeRouteString('$providerParams$/rest/services/FeatureServer/:layer/:method','test')
+      let fullRoute = helpers.composeRouteString('$providerParams/rest/services/FeatureServer/:layer/:method','test')
       fullRoute.should.equal('/test/:id/rest/services/FeatureServer/:layer/:method')
     })
 
