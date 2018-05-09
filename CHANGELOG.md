@@ -2,9 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unrelease
-### Added
-* plugin routes can override a provider's settings for `hosts` and `disableIdParam` when constructing route paths.
+## Unreleased
+### Fixed
+* Routes with a $namespace placeholder require a $providerParams placeholder to also receive the `:host/:id` URL fragment.
 
 ## [3.6.0] - 2018-04-25
 ### Added
