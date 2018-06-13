@@ -12,6 +12,35 @@ function paramTrim(req, res, next) {
   next()
 }
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+function paramParse(req, res, next) {
+  Object.keys(req.query).map(param=>{
+    req.query[param] = tryParse(req.query[param])
+    })
+  next()
+}
+
+function tryParse (json) {
+  try {
+    return JSON.parse(json)
+  } catch (e) {
+    return json
+  }
+}
+
+function coerceQuery (params) {
+  Object.keys(params).forEach(param => {
+    if (params[param] === 'false') params[param] = false
+    else if (params[param] === 'true') params[param] = true
+  })
+  return params
+}
+
 module.exports = {
-  paramTrim
+  paramTrim, paramParse
 }
