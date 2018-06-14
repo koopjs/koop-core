@@ -32,6 +32,15 @@ describe('Middleware tests', function () {
       req.query.param1.jsonstr.should.equal('foobar')
     })
   })
+
+  describe('paramCoerce function', function () {
+    it('should convert strings "true" or "false" to booleans', function () {
+      const req = {query: { param1: 'true', param2: 'false'} };
+      middleware.paramCoerce(req, {}, function(){});
+      req.query.param1.should.equal(true)
+      req.query.param2.should.equal(false)
+    })
+  })
 })
 
 
