@@ -24,7 +24,7 @@ describe('Tests for registering auth plugin', function () {
       koop._auth_module.should.be.instanceOf(Object)
       koop._auth_module.authenticate.should.be.instanceOf(Function)
       koop._auth_module.authorize.should.be.instanceOf(Function)
-      koop._auth_module.getAuthenticationSpecification.should.be.instanceOf(Function)
+      koop._auth_module.authenticationSpecification.should.be.instanceOf(Function)
     })
   })
 })
