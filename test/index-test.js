@@ -30,7 +30,6 @@ describe('Tests for registering auth plugin', function () {
 
   describe('can register an auth plugin and apply methods to a provider', function () {
     it('should register successfully', function () {
-
       const koop = new Koop()
       koop.register(auth)
       koop.register(provider)
@@ -57,6 +56,4 @@ describe('Tests for registering auth plugin', function () {
       providerWithAuth.Model.prototype.should.have.property('authorize')
     })
   })
-
 })
-
