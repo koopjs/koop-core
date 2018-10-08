@@ -28,7 +28,7 @@ describe('Index tests for registering providers', function () {
         .catch(err => {
           console.log(err)
         })
-        .then(done);
+        .then(done)
     })
 
     it('should not return 404 for prefixed plugin route', function (done) {
@@ -42,9 +42,8 @@ describe('Index tests for registering providers', function () {
         .catch(err => {
           console.log(err)
         })
-        .then(done);;
+        .then(done)
     })
-
   })
 })
 
