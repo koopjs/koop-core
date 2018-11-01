@@ -212,10 +212,10 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
     })
     route.methods.forEach(method => {
       try {
-        console.log(`provider=${provider.name} fullRoute:${fullRoute}`)
+        console.log(`provider=${provider.name} fullRoute:${fullRoute} ${method.toUpperCase()}`)
         server[method](fullRoute, controller[route.handler].bind(controller))
       } catch (e) {
-        console.error(`error=controller does not contain specified method method=${method} path=${fullRoute} handler=${route.handler}`)
+        console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${fullRoute} handler=${route.handler}`)
         process.exit(1)
       }
     })
@@ -230,7 +230,7 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
       try {
         server[method](routePath, controller[route.handler].bind(controller))
       } catch (e) {
-        console.error(`error=controller does not contain specified method method=${method} path=${routePath} handler=${route.handler}`)
+        console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${routePath} handler=${route.handler}`)
         process.exit(1)
       }
     })
