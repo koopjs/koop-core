@@ -19,6 +19,7 @@ const Util = require('util')
 const path = require('path')
 const geoservices = require('koop-output-geoservices')
 const LocalFS = require('koop-localfs')
+const compression = require('compression')
 
 function Koop (config) {
   this.version = pkg.version
@@ -84,6 +85,7 @@ function initServer () {
     .set('view engine', 'ejs')
     .use(express.static(path.join(__dirname, '/public')))
     .use(cors())
+    .use(compression())
 }
 
 Koop.prototype.register = function (plugin, options) {
