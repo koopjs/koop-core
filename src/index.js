@@ -92,7 +92,7 @@ Koop.prototype.register = function (plugin, options) {
     case 'provider':
       return this._registerProvider(plugin, options)
     case 'cache':
-      return this._registerCache(plugin)
+      return this._registerCache(plugin, options)
     case 'plugin':
       return this._registerPlugin(plugin)
     case 'filesystem':
@@ -243,8 +243,8 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
  *
  * @param {object} cache - a koop database adapter
  */
-Koop.prototype._registerCache = function (Cache) {
-  this.cache = new Cache()
+Koop.prototype._registerCache = function (Cache, options) {
+  this.cache = (typeof options !== 'undefined') ? new Cache(options) : new Cache()
   this.log.info('registered cache:', Cache.name, Cache.version)
 }
 
