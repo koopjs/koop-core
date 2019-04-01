@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+* function registerPlugins to register many plugins at once and instantiate them in the correct order
+
 ## [3.11.0] - 2019-03-29
 ### Added
 * pass in options object when registering a cache provider

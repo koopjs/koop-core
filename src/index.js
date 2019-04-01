@@ -86,6 +86,40 @@ function initServer () {
     .use(cors())
 }
 
+/**
+ * Register multiple koop plugins
+ * @param {array} plugins - an array of koop plugins
+ *  - @param {object} plugin - an individual koop plugin
+ *  - @param {object} options - options given to plugin on instantiation
+ */
+Koop.registerPlugins = function (plugins) {
+  const plugins = plugin.reduce((plugins, plugin) => {
+    if (plugin.type === 'provider') {
+      plugins.provider.push(plugin)
+    } else if (plugin.type) {
+      plugins.other.push(plugin)
+    } else {
+      plugins.push(provider)
+    }
+   }, {
+      provider: [],
+      other: []
+    })
+
+  plugins.other.forEach(plugin => {
+    this.register(plugin.plugin, plugin.options)
+  })
+
+  plugins.provider.forEach(plugin => {
+    this.register(plugin.plugin, plugin.options)
+  })
+}
+
+/**
+ * Register an individual plugin
+ * @param {object} plugin - an individual koop plugin
+ * @param {object} options - options given to plugin on instantiation
+ */
 Koop.prototype.register = function (plugin, options) {
   if (typeof plugin === 'undefined') throw new Error('Plugin undefined.')
   switch (plugin.type) {
