@@ -37,7 +37,7 @@ function Koop (config) {
 
   const dataset = new Dataset(this)
   const datasetController = new DatasetController(dataset)
-  bindRouteSet(routes, datasetController, this.server)
+  bindRouteSet({ name: 'koop-cache', routes}, datasetController, this.server)
 
   const fsRoutes = routes.concat(geoservices.routes.map(route => {
     return {
@@ -47,7 +47,7 @@ function Koop (config) {
     }
   }))
 
-  bindRouteSet(fsRoutes, datasetController, this.server)
+  bindRouteSet({ name: 'koop-cache-geoservices', routes: fsRoutes}, datasetController, this.server)
 
   this.status = {
     version: this.version,
@@ -207,23 +207,24 @@ function bindRoutes (provider, controller, server, pluginRoutes, options) {
 
 /**
  * Print provider routes to terminal
- * @param {string} providerName 
- * @param {object[]} providerRoutes 
+ * @param {string} providerName
+ * @param {object[]} providerRoutes
  */
 function printProviderRoutes (providerName, providerRoutes) {
   // Print provider routes
-  const t = new Table()
+  const table = new Table()
   providerRoutes.forEach(route => {
-    t.cell(chalk.cyan(`Custom Routes for Provider: ${chalk.white(providerName)}`), chalk.yellow(route.route))
-    t.cell(chalk.cyan(`Methods`), chalk.green(route.methods.toUpperCase()))
-    t.newRow()
+    table.cell(chalk.cyan(`Dedicated routes for: ${chalk.white(providerName)}`), chalk.yellow(route.route))
+    table.cell(chalk.cyan(`Methods`), chalk.green(route.methods.toUpperCase()))
+    table.newRow()
   })
+  console.log(`\n${table.toString()}`)
 }
 
 /**
  * Print provider plugin routes to terminal
- * @param {string} providerName 
- * @param {object} pluginRouteMap 
+ * @param {string} providerName
+ * @param {object} pluginRouteMap
  */
 function printPluginRoutes (providerName, pluginRouteMap) {
   // Print output plugin routes
@@ -242,15 +243,17 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
   const name = provider.namespace || provider.plugin_name || provider.name
   const namespace = name.replace(/\s/g, '').toLowerCase()
   const pluginRouteMap = {}
+
   pluginRoutes.forEach(route => {
+    // Compose the full route string from its components
     let fullRoute = helpers.composeRouteString(route.path, namespace, {
       hosts: provider.hosts,
       disableIdParam: provider.disableIdParam,
       absolutePath: route.absolutePath,
       routePrefix: options.routePrefix
     })
-    pluginRouteMap[route.output] = pluginRouteMap[route.output] || []
-    pluginRouteMap[route.output].push({ route: fullRoute, methods: route.methods.join(', ') })
+
+    // Bind the controller to each route
     route.methods.forEach(method => {
       try {
         server[method](fullRoute, controller[route.handler].bind(controller))
@@ -259,18 +262,23 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
         process.exit(1)
       }
     })
+
+    // For each output plugin, keep track of routes, methods
+    pluginRouteMap[route.output] = pluginRouteMap[route.output] || []
+    pluginRouteMap[route.output].push({ route: fullRoute, methods: route.methods.join(', ') })
   })
   // Print plugin routes to console
-  printPluginRoutes(name, pluginRouteMap)
+  if (process.env.NODE_ENV !== 'test') printPluginRoutes(name, pluginRouteMap)
 }
 
 function bindRouteSet (provider, controller, server, options = {}) {
   const { routePrefix = '' } = options
   const { routes = [] } = provider
   const providerRoutes = []
+
   routes.forEach(route => {
     const routePath = path.posix.join(routePrefix, route.path)
-    providerRoutes.push({ route: routePath, methods: route.methods.join(', ') })
+
     route.methods.forEach(method => {
       try {
         server[method](routePath, controller[route.handler].bind(controller))
@@ -279,10 +287,16 @@ function bindRouteSet (provider, controller, server, options = {}) {
         process.exit(1)
       }
     })
+
+    // Keep track of routes, methods
+    providerRoutes.push({ route: routePath, methods: route.methods.join(', ') })
   })
+
   // Print provider routes to terminal
-  const name = provider.namespace || provider.plugin_name || provider.name
-  printProviderRoutes(name, providerRoutes)
+  if (process.env.NODE_ENV !== 'test') {
+    const name = provider.namespace || provider.plugin_name || provider.name
+    printProviderRoutes(name, providerRoutes)
+  }
 }
 
 /**
