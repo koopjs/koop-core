@@ -37,7 +37,21 @@ function Koop (config) {
 
   const dataset = new Dataset(this)
   const datasetController = new DatasetController(dataset)
+<<<<<<< HEAD
   bindRoutes({ name: 'datasets', routes }, datasetController, this.server, this.pluginRoutes)
+=======
+  bindRouteSet({ name: 'koop-cache', routes }, datasetController, this.server)
+
+  const fsRoutes = routes.concat(geoservices.routes.map(route => {
+    return {
+      path: `/datasets/:id/${route.path}`,
+      handler: route.handler,
+      methods: route.methods
+    }
+  }))
+
+  bindRouteSet({ name: 'koop-cache-geoservices', routes: fsRoutes }, datasetController, this.server)
+>>>>>>> Remove lint.
 
   this.status = {
     version: this.version,
