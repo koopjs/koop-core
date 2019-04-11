@@ -19,6 +19,8 @@ const Util = require('util')
 const path = require('path')
 const geoservices = require('koop-output-geoservices')
 const LocalFS = require('koop-localfs')
+const chalk = require('chalk')
+const Table = require('easy-table')
 
 function Koop (config) {
   this.version = pkg.version
@@ -177,8 +179,11 @@ Koop.prototype._initProviderModel = function (provider) {
 Koop.prototype._registerOutput = function (Output) {
   extend(Controller, Output)
   extend(DatasetController, Output)
-
-  this.pluginRoutes = this.pluginRoutes.concat(Output.routes)
+  const routes = Output.routes.map(function (route) {
+    route.output = Output.name
+    return route
+  })
+  this.pluginRoutes = this.pluginRoutes.concat(routes)
   this.log.info('registered output:', Output.name, Output.version)
 }
 
@@ -197,12 +202,46 @@ function extend (klass, extender) {
  */
 function bindRoutes (provider, controller, server, pluginRoutes, options) {
   bindPluginOverrides(provider, controller, server, pluginRoutes, options)
-  bindRouteSet(provider.routes, controller, server, options)
+  bindRouteSet(provider, controller, server, options)
+}
+
+/**
+ * Print provider routes to terminal
+ * @param {string} providerName 
+ * @param {object[]} providerRoutes 
+ */
+function printProviderRoutes (providerName, providerRoutes) {
+  // Print provider routes
+  const t = new Table()
+  providerRoutes.forEach(route => {
+    t.cell(chalk.cyan(`Custom Routes for Provider: ${chalk.white(providerName)}`), chalk.yellow(route.route))
+    t.cell(chalk.cyan(`Methods`), chalk.green(route.methods.toUpperCase()))
+    t.newRow()
+  })
+}
+
+/**
+ * Print provider plugin routes to terminal
+ * @param {string} providerName 
+ * @param {object} pluginRouteMap 
+ */
+function printPluginRoutes (providerName, pluginRouteMap) {
+  // Print output plugin routes
+  Object.keys(pluginRouteMap).forEach(key => {
+    const table = new Table()
+    pluginRouteMap[key].forEach(route => {
+      table.cell(chalk.cyan(`Routes for Provider: ${chalk.white(providerName)} Output: ${chalk.white(key)}`), chalk.yellow(route.route))
+      table.cell(chalk.cyan(`Methods`), chalk.green(route.methods.toUpperCase()))
+      table.newRow()
+    })
+    console.log(`\n${table.toString()}`)
+  })
 }
 
 function bindPluginOverrides (provider, controller, server, pluginRoutes, options = {}) {
   const name = provider.namespace || provider.plugin_name || provider.name
   const namespace = name.replace(/\s/g, '').toLowerCase()
+  const pluginRouteMap = {}
   pluginRoutes.forEach(route => {
     let fullRoute = helpers.composeRouteString(route.path, namespace, {
       hosts: provider.hosts,
@@ -210,9 +249,10 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
       absolutePath: route.absolutePath,
       routePrefix: options.routePrefix
     })
+    pluginRouteMap[route.output] = pluginRouteMap[route.output] || []
+    pluginRouteMap[route.output].push({ route: fullRoute, methods: route.methods.join(', ') })
     route.methods.forEach(method => {
       try {
-        console.log(`provider=${provider.name} fullRoute:${fullRoute} ${method.toUpperCase()}`)
         server[method](fullRoute, controller[route.handler].bind(controller))
       } catch (e) {
         console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${fullRoute} handler=${route.handler}`)
@@ -220,12 +260,17 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
       }
     })
   })
+  // Print plugin routes to console
+  printPluginRoutes(name, pluginRouteMap)
 }
 
-function bindRouteSet (routes = [], controller, server, options = {}) {
+function bindRouteSet (provider, controller, server, options = {}) {
   const { routePrefix = '' } = options
+  const { routes = [] } = provider
+  const providerRoutes = []
   routes.forEach(route => {
     const routePath = path.posix.join(routePrefix, route.path)
+    providerRoutes.push({ route: routePath, methods: route.methods.join(', ') })
     route.methods.forEach(method => {
       try {
         server[method](routePath, controller[route.handler].bind(controller))
@@ -235,6 +280,9 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
       }
     })
   })
+  // Print provider routes to terminal
+  const name = provider.namespace || provider.plugin_name || provider.name
+  printProviderRoutes(name, providerRoutes)
 }
 
 /**
