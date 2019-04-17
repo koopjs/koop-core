@@ -37,15 +37,26 @@ function Koop (config) {
   const datasetController = new DatasetController(dataset)
   bindRouteSet(routes, datasetController, this.server)
 
-  const fsRoutes = routes.concat(geoservices.routes.map(route => {
+  // Koop-core includes routes to access cached-datasets (GET, PUT, DELETE /datasets/:id and
+  // GET, PUT, DELETE /datasets/:id/metadata). We also want to be able to leverage the Geoservices
+  // output plugin for cached datasets, so here we define such routes for cached datasets
+  const cacheGeoservicesRoutes = geoservices.routes.filter(route => {
+    // Only include geoservices routes that contain "FeatureServer" AND do contain "rest/services".
+    // This ensures we don't have authorization routes
+    // or rest/info routes applied to cache datasets, which are not applicable
+    return route.path.includes('FeatureServer') && !route.path.includes('rest/services')
+  }).map(route => {
+    // Extract the fragment of the path from "FeatureServer" onward.  This is critical because the Geoservices plugin
+    // as of 2.
+    const path = route.path.substring(route.path.indexOf('FeatureServer'))
     return {
-      path: `/datasets/:id/${route.path}`,
+      path: `/datasets/:id/${path}`,
       handler: route.handler,
       methods: route.methods
     }
-  }))
+  })
 
-  bindRouteSet(fsRoutes, datasetController, this.server)
+  bindRouteSet(cacheGeoservicesRoutes, datasetController, this.server)
 
   this.status = {
     version: this.version,
@@ -229,6 +240,7 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
     route.methods.forEach(method => {
       try {
         server[method](routePath, controller[route.handler].bind(controller))
+        console.log(routePath)
       } catch (e) {
         console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${routePath} handler=${route.handler}`)
         process.exit(1)
