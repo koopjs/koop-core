@@ -35,25 +35,7 @@ function Koop (config) {
 
   const dataset = new Dataset(this)
   const datasetController = new DatasetController(dataset)
-  bindRouteSet(routes, datasetController, this.server)
-
-  // Koop-core includes routes to access cached-datasets (GET, PUT, DELETE /datasets/:id and
-  // GET, PUT, DELETE /datasets/:id/metadata). We also want to be able to leverage the Geoservices
-  // output plugin for cached datasets, so here we define such routes for cached datasets
-  const cacheGeoservicesRoutes = geoservices.routes.filter(route => {
-    // Only include geoservices routes that contain "FeatureServer" AND do contain "rest/services".
-    // This ensures we don't have authorization routes
-    // or rest/info routes applied to cache datasets, which are not applicable
-    return route.path.includes('FeatureServer') && !route.path.includes('rest/services')
-  }).map(route => {
-    return {
-      path: `/datasets/:id/${route.path}`,
-      handler: route.handler,
-      methods: route.methods
-    }
-  })
-
-  bindRouteSet(cacheGeoservicesRoutes, datasetController, this.server)
+  bindRoutes({ name: 'datasets', routes }, datasetController, this.server, this.pluginRoutes)
 
   this.status = {
     version: this.version,
@@ -204,8 +186,8 @@ function extend (klass, extender) {
  * @param {object} server - the koop express server
  */
 function bindRoutes (provider, controller, server, pluginRoutes, options) {
-  bindPluginOverrides(provider, controller, server, pluginRoutes, options)
   bindRouteSet(provider.routes, controller, server, options)
+  bindPluginOverrides(provider, controller, server, pluginRoutes, options)
 }
 
 function bindPluginOverrides (provider, controller, server, pluginRoutes, options = {}) {
@@ -236,6 +218,7 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
     const routePath = path.posix.join(routePrefix, route.path)
     route.methods.forEach(method => {
       try {
+        console.log(`${routePath} ${method.toUpperCase()}`)
         server[method](routePath, controller[route.handler].bind(controller))
       } catch (e) {
         console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${routePath} handler=${route.handler}`)
