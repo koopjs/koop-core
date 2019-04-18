@@ -46,11 +46,8 @@ function Koop (config) {
     // or rest/info routes applied to cache datasets, which are not applicable
     return route.path.includes('FeatureServer') && !route.path.includes('rest/services')
   }).map(route => {
-    // Extract the fragment of the path from "FeatureServer" onward.  This is critical because the Geoservices plugin
-    // as of 2.
-    const path = route.path.substring(route.path.indexOf('FeatureServer'))
     return {
-      path: `/datasets/:id/${path}`,
+      path: `/datasets/:id/${route.path}`,
       handler: route.handler,
       methods: route.methods
     }
