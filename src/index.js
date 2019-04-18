@@ -237,7 +237,6 @@ function bindRouteSet (routes = [], controller, server, options = {}) {
     route.methods.forEach(method => {
       try {
         server[method](routePath, controller[route.handler].bind(controller))
-        console.log(routePath)
       } catch (e) {
         console.error(`error=controller does not contain specified method method=${method.toUpperCase()} path=${routePath} handler=${route.handler}`)
         process.exit(1)
