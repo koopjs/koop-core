@@ -246,7 +246,7 @@ function bindPluginOverrides (provider, controller, server, pluginRoutes, option
     // For each output plugin, keep track of routes, methods
     pluginRouteMap[route.output] = pluginRouteMap[route.output] || {}
     pluginRouteMap[route.output][fullRoute] = pluginRouteMap[route.output][fullRoute] || []
-    
+
     // Bind the controller to each route
     route.methods.forEach(method => {
       try {
@@ -285,8 +285,6 @@ function bindRouteSet (provider, controller, server, options = {}) {
         process.exit(1)
       }
     })
-
-    
   })
 
   // Print provider routes to terminal
