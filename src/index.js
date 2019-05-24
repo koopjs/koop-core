@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const compression = require('compression')
 const pkg = require('../package.json')
 const _ = require('lodash')
 const Cache = require('koop-cache-memory')
@@ -24,8 +25,9 @@ const Table = require('easy-table')
 
 function Koop (config) {
   this.version = pkg.version
-  this.server = initServer()
   this.config = require('config')
+  this.server = initServer(this.config)
+
   // default to LocalDB cache
   // cache registration overrides this
   this.cache = new Cache()
@@ -56,8 +58,8 @@ Util.inherits(Koop, Events)
 /**
  * express middleware setup
  */
-function initServer () {
-  return express()
+function initServer (config) {
+  const app = express()
   // parse application/json
     .use(bodyParser.json({ limit: '10000kb' }))
   // parse application/x-www-form-urlencoded
@@ -76,6 +78,10 @@ function initServer () {
     .set('view engine', 'ejs')
     .use(express.static(path.join(__dirname, '/public')))
     .use(cors())
+
+    // Use compression unless explicitly disable in the config
+    if (!config.disableCompression) app.use(compression())
+    return app
 }
 
 Koop.prototype.register = function (plugin, options) {
