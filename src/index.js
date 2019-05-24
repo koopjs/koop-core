@@ -79,7 +79,7 @@ function initServer (config) {
     .use(express.static(path.join(__dirname, '/public')))
     .use(cors())
 
-    // Use compression unless explicitly disable in the config
+  // Use compression unless explicitly disable in the config
   if (!config.disableCompression) app.use(compression())
   return app
 }
