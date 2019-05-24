@@ -62,10 +62,10 @@ function initServer (config) {
   const app = express()
   // parse application/json
     .use(bodyParser.json({ limit: '10000kb' }))
-  // parse application/x-www-form-urlencoded
+    // parse application/x-www-form-urlencoded
     .use(bodyParser.urlencoded({ extended: false }))
     .disable('x-powered-by')
-  // TODO this should just live inside featureserver
+    // TODO this should just live inside featureserver
     .use((req, res, next) => {
     // request parameters can come from query url or POST body
       req.query = _.extend(req.query || {}, req.body || {})
@@ -74,14 +74,14 @@ function initServer (config) {
     .use(middleware.paramTrim)
     .use(middleware.paramParse)
     .use(middleware.paramCoerce)
-  // for demos and preview maps in providers
+    // for demos and preview maps in providers
     .set('view engine', 'ejs')
     .use(express.static(path.join(__dirname, '/public')))
     .use(cors())
 
     // Use compression unless explicitly disable in the config
-    if (!config.disableCompression) app.use(compression())
-    return app
+  if (!config.disableCompression) app.use(compression())
+  return app
 }
 
 Koop.prototype.register = function (plugin, options) {
