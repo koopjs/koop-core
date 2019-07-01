@@ -18,7 +18,9 @@ Model.prototype.pull = function (req, callback) {
 }
 
 function createKey (req) {
-  let key = req.url.split('/')[1]
+  let key = (req.params.layer)
+    ? req.url.split('/')[1] + '_' + req.params.layer
+    : req.url.split('/')[1]
   if (req.params.host) key = [key, req.params.host].join('::')
   if (req.params.id) key = [key, req.params.id].join('::')
   return key
