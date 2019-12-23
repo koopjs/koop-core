@@ -154,7 +154,7 @@ Koop.prototype._registerProvider = function (provider, options = {}) {
   this.log.info('registered provider:', name, provider.version)
 }
 
-Koop.prototype._initProviderModel = function (provider, options) {
+Koop.prototype._initProviderModel = function (provider, options = {}) {
   function ThisModel (koop) {
     this.cache = options.cache || koop.cache
 
