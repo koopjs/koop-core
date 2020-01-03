@@ -35,7 +35,20 @@ describe('Index tests for registering providers', function () {
       koop.controllers['test-provider'].model.options.should.have.property('name', 'value')
     })
 
-    it('should register plugin-routes before provider-routes', function () {
+    it('should register successfully and attach optional cache', function () {
+      const koop = new Koop()
+      koop.register(provider, {
+        cache: {
+          retrieve: (key, query, callback) => {},
+          upsert: (key, data, options) => {},
+          customFunction: () => {}
+        }
+      })
+      koop.controllers['test-provider'].model.should.have.property('cache')
+      koop.controllers['test-provider'].model.cache.should.have.property('customFunction').and.be.a.Function()
+    })
+
+    it('should register provider-routes before plugin-routes', function () {
       const koop = new Koop()
       koop.register(provider)
       // Check that the stack index of the plugin routes are prior to index of provider routes
