@@ -28,7 +28,8 @@ const providerOptionsSchema = Joi.object({
   cache: Joi.object().keys({
     retrieve: Joi.function().arity(3).required(),
     upsert: Joi.function().arity(3).required()
-  }).unknown(true).optional()
+  }).unknown(true).optional(),
+  routePrefix: Joi.string().optional()
 }).unknown(true)
 
 function Koop (config) {
@@ -128,7 +129,7 @@ Koop.prototype._registerAuth = function (auth) {
  * @param {object} provider - the provider to be registered
  */
 Koop.prototype._registerProvider = function (provider, options = {}) {
-  validateAgainstSchema(options, providerOptionsSchema)
+  validateAgainstSchema(options, providerOptionsSchema, 'provider options')
 
   // If an authentication module has been registered, apply it to the provider's Model
   if (this._auth_module) {
@@ -357,9 +358,9 @@ Koop.prototype._registerPlugin = function (Plugin) {
   this.log.info('registered plugin:', name, Plugin.version)
 }
 
-function validateAgainstSchema (params, schema) {
+function validateAgainstSchema (params, schema, prefix) {
   const result = schema.validate(params)
-  if (result.error) throw new Error(result.error)
+  if (result.error) throw new Error(`${prefix} ${result.error}`)
 }
 
 module.exports = Koop
