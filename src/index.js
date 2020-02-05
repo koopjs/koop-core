@@ -256,7 +256,7 @@ function printPluginRoutes (providerName, pluginRouteMap) {
 }
 
 function bindPluginRoutes (provider, controller, server, pluginRoutes, options = {}) {
-  const name = provider.namespace || provider.pluginName || provider.plugin_name || provider.name
+  const name = options.name || provider.namespace || provider.pluginName || provider.plugin_name || provider.name
   const namespace = name.replace(/\s/g, '').toLowerCase()
   const pluginRouteMap = {}
 
