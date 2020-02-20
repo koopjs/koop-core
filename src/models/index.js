@@ -7,9 +7,10 @@ function Model (options = {}) {
 
 Model.prototype.pull = function (req, callback) {
   const key = (this.createKey) ? this.createKey(req) : createKey(req)
+  const dataKey = `${key}::data`
   this.before = this.before || before.bind(this)
   this.after = this.after || after.bind(this)
-  this.cache.retrieve(key, req.query, (err, cached) => {
+  this.cache.retrieve(dataKey, req.query, (err, cached) => {
     if (!err && isFresh(cached)) {
       callback(null, cached)
     } else {
@@ -20,10 +21,46 @@ Model.prototype.pull = function (req, callback) {
           this.after(req, data, (err, data) => {
             if (err) return callback(err)
             callback(null, data)
-            if (data.ttl) this.cache.upsert(key, data, { ttl: data.ttl })
+            if (data.ttl) this.cache.upsert(dataKey, data, { ttl: data.ttl })
           })
         })
       })
+    }
+  })
+}
+
+Model.prototype.pullLayer = function (req, callback) {
+  const key = (this.createKey) ? this.createKey(req) : createKey(req)
+  const layerKey = `${key}::layer`;
+  this.cache.retrieve(layerKey, req.query, (err, cached) => {
+    if (!err && isFresh(cached)) {
+      callback(null, cached)
+    } else if (this.getLayer) {
+      this.getLayer(req, (err, data) => {
+        if (err) return callback(err)
+        callback(null, data)
+        if (data.ttl) this.cache.upsert(layerKey, data, { ttl: data.ttl })
+      })
+    } else {
+      callback(new Error('getLayer() function is not implemented in the provider.'))
+    }
+  })
+}
+
+Model.prototype.pullCatalog = function (req, callback) {
+  const key = (this.createKey) ? this.createKey(req) : createKey(req)
+  const catalogKey = `${key}::catalog`
+  this.cache.retrieve(catalogKey, req.query, (err, cached) => {
+    if (!err && isFresh(cached)) {
+      callback(null, cached)
+    } else if (this.getCatalog) {
+      this.getCatalog(req, (err, data) => {
+        if (err) return callback(err)
+        callback(null, data)
+        if (data.ttl) this.cache.upsert(catalogKey, data, { ttl: data.ttl })
+      })
+    } else {
+      callback(new Error('getCatalog() function is not implemented in the provider.'))
     }
   })
 }
