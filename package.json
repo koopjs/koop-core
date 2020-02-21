@@ -31,6 +31,8 @@
   "devDependencies": {
     "buble": "^0.19.8",
     "gh-release": "^3.5.0",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.7",
     "mocha": "^7.0.1",
     "should": "^13.2.3",
     "should-sinon": "0.0.6",
@@ -70,5 +72,13 @@
       "beforeEach",
       "afterEach"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "standard --fix"
   }
 }
