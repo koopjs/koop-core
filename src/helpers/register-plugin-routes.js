@@ -21,7 +21,7 @@ function registerProviderRoutes ({ provider, controller, server, pluginRoutes },
       server,
       routeString,
       methods,
-      controller: bindController({ controller, route, namespace})
+      controller: bindController({ controller, route, namespace })
     })
 
     // For each output plugin, keep track of routes, methods
@@ -32,9 +32,9 @@ function registerProviderRoutes ({ provider, controller, server, pluginRoutes },
 }
 
 function bindController (params) {
-  const { controller, route: { handler, path, output }, namespace } = params
+  const { controller, route: { handler, path, output } } = params
 
-  if (!controller[handler]) throw new Error (`Handler "${handler}" assigned to route "${path}" by the "${output}" plugin is undefined for the Koop controller`)
+  if (!controller[handler]) throw new Error(`Handler "${handler}" assigned to route "${path}" by the "${output}" plugin is undefined for the Koop controller`)
   return controller[handler].bind(controller)
 }
 
@@ -43,11 +43,11 @@ function registerRoutes (params) {
     server,
     routeString,
     methods,
-    controller,
+    controller
   } = params
 
   methods.forEach(method => {
-      server[method](routeString, controller)
+    server[method](routeString, controller)
   })
 }
 

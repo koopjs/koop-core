@@ -1,9 +1,7 @@
 const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 require('should-sinon')
-const _ = require('lodash')
 const registerPluginRoutes = require('../../src/helpers/register-plugin-routes')
-
 
 const mockController = {
   testHandler: () => {}
@@ -20,7 +18,6 @@ const mockPluginRoutes = [
 ]
 
 describe('Tests for register-plugin-routes', function () {
-
   it('should register a plugin route', () => {
     const mockServer = sinon.spy({
       get: () => {}
@@ -32,11 +29,11 @@ describe('Tests for register-plugin-routes', function () {
       pluginRoutes: mockPluginRoutes,
       server: mockServer
     })
-  
+
     mockServer.get.should.be.calledOnce()
     pluginRouteMap.should.deepEqual({
       MockOutput: {
-        '/mock-provider/:host/:id/output-plugin': ["get"]
+        '/mock-provider/:host/:id/output-plugin': ['get']
       }
     })
   })

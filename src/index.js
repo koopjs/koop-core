@@ -54,10 +54,10 @@ function Koop (config) {
     provider: datasetProvider,
     controller: datasetController,
     server: this.server,
-    pluginRoutes: this.pluginRoutes,
+    pluginRoutes: this.pluginRoutes
   })
   consolePrinting('datasets', datasetRoutes)
-  
+
   this.status = {
     version: this.version,
     providers: {}
@@ -232,8 +232,6 @@ function registerRoutes ({ provider, controller, server, pluginRoutes }, options
 
   return { providerRouteMap, pluginRouteMap }
 }
-
-
 
 /**
  * registers a cache

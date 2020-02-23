@@ -1,7 +1,6 @@
 const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 require('should-sinon')
-const _ = require('lodash')
 const registerProviderRoutes = require('../../src/helpers/register-provider-routes')
 
 const mockController = {
@@ -9,7 +8,6 @@ const mockController = {
 }
 
 describe('Tests for register-provider-routes', function () {
-
   it('should register a provider route', () => {
     const mockServer = sinon.spy({
       get: () => {}
@@ -30,9 +28,9 @@ describe('Tests for register-provider-routes', function () {
       controller: mockController,
       server: mockServer
     })
-  
+
     mockServer.get.should.be.calledOnce()
-    providerRouteMap.should.deepEqual({ "/test/route": [ "get" ] })
+    providerRouteMap.should.deepEqual({ '/test/route': [ 'get' ] })
   })
 
   it('should throw an error if handler not found on Koop controller', () => {

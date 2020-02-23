@@ -2,16 +2,15 @@ const chalk = require('chalk')
 const Table = require('easy-table')
 
 module.exports = function (namespace, routes) {
-  if (process.env.NODE_ENV === 'test') return 
+  if (process.env.NODE_ENV === 'test') return
 
   const { providerRouteMap, pluginRouteMap } = routes
   printProviderRoutes(namespace, providerRouteMap)
   printPluginRoutes(namespace, pluginRouteMap)
 }
 
-
 function printProviderRoutes (namespace, providerRouteMap) {
-  if (process.env.NODE_ENV === 'test') return 
+  if (process.env.NODE_ENV === 'test') return
 
   // Print provider routes
   const table = new Table()
@@ -22,7 +21,6 @@ function printProviderRoutes (namespace, providerRouteMap) {
   })
   console.log(`\n${table.toString()}`)
 }
-
 
 function printPluginRoutes (namespace, pluginRouteMap) {
   // Print output plugin routes

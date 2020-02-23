@@ -1,5 +1,4 @@
 const path = require('path')
-const _ = require('lodash')
 
 const composePath = (routePrefix, routeString) => path.posix.join(routePrefix, routeString)
 function registerProviderRoutes ({ provider, controller, server }, options = {}) {
@@ -14,7 +13,7 @@ function registerProviderRoutes ({ provider, controller, server }, options = {})
       server,
       path: composedPath,
       methods,
-      controller: bindController({ controller, route, namespace})
+      controller: bindController({ controller, route, namespace })
     })
     providerRoutes[composedPath] = methods
   })
@@ -25,7 +24,7 @@ function registerProviderRoutes ({ provider, controller, server }, options = {})
 function bindController (params) {
   const { controller, route: { handler, path }, namespace } = params
 
-  if (!controller[handler]) throw new Error (`Handler "${handler}" assigned to route "${path}" by the "${namespace}" provider is undefined for the Koop controller`)
+  if (!controller[handler]) throw new Error(`Handler "${handler}" assigned to route "${path}" by the "${namespace}" provider is undefined for the Koop controller`)
   return controller[handler].bind(controller)
 }
 
@@ -34,11 +33,11 @@ function registerRoutes (params) {
     server,
     path,
     methods,
-    controller,
+    controller
   } = params
 
   methods.forEach(method => {
-      server[method](path, controller)
+    server[method](path, controller)
   })
 }
 
