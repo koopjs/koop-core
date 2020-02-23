@@ -53,7 +53,7 @@ describe('Tests for register-plugin-routes', function () {
       should.fail('Should have thrown')
     } catch (err) {
       mockServer.get.should.be.callCount(0)
-      err.message.should.equal(`Handler "testHandler" assigned to route "/output-plugin" by the "MockOutput" plugin is undefined for the Koop controller`)
+      err.message.should.equal('Handler "testHandler" assigned to route "/output-plugin" by the "MockOutput" plugin is undefined for the Koop controller')
     }
   })
 })

@@ -30,7 +30,7 @@ describe('Tests for register-provider-routes', function () {
     })
 
     mockServer.get.should.be.calledOnce()
-    providerRouteMap.should.deepEqual({ '/test/route': [ 'get' ] })
+    providerRouteMap.should.deepEqual({ '/test/route': ['get'] })
   })
 
   it('should throw an error if handler not found on Koop controller', () => {
@@ -58,7 +58,7 @@ describe('Tests for register-provider-routes', function () {
       should.fail('Should have thrown')
     } catch (err) {
       mockServer.get.should.be.callCount(0)
-      err.message.should.equal(`Handler "testHandler" assigned to route "/test/route" by the "mock-provider" provider is undefined for the Koop controller`)
+      err.message.should.equal('Handler "testHandler" assigned to route "/test/route" by the "mock-provider" provider is undefined for the Koop controller')
     }
   })
 })
