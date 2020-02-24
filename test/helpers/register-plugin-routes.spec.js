@@ -18,7 +18,7 @@ const mockPluginRoutes = [
 ]
 
 describe('Tests for register-plugin-routes', function () {
-  it('should register a plugin route', () => {
+  it('should register a plugin route, lowercased', () => {
     const mockServer = sinon.spy({
       get: () => {}
     })
@@ -34,6 +34,30 @@ describe('Tests for register-plugin-routes', function () {
     pluginRouteMap.should.deepEqual({
       MockOutput: {
         '/mock-provider/:host/:id/output-plugin': ['get']
+      }
+    })
+  })
+
+  it('should register a plugin route, uppercased', () => {
+    const mockPluginRoutes = [
+      { output: 'MockOutput', path: '/output-plugin', methods: ['GET'], handler: 'testHandler' }
+    ]
+
+    const mockServer = sinon.spy({
+      get: () => {}
+    })
+
+    const pluginRouteMap = registerPluginRoutes({
+      provider: mockProvider,
+      controller: mockController,
+      pluginRoutes: mockPluginRoutes,
+      server: mockServer
+    })
+
+    mockServer.get.should.be.calledOnce()
+    pluginRouteMap.should.deepEqual({
+      MockOutput: {
+        '/mock-provider/:host/:id/output-plugin': ['GET']
       }
     })
   })

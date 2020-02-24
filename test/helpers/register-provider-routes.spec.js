@@ -7,7 +7,7 @@ const mockController = {
   testHandler: () => {}
 }
 
-describe('Tests for register-provider-routes', function () {
+describe('Tests for register-provider-routes, lowercased', function () {
   it('should register a provider route', () => {
     const mockServer = sinon.spy({
       get: () => {}
@@ -31,6 +31,31 @@ describe('Tests for register-provider-routes', function () {
 
     mockServer.get.should.be.calledOnce()
     providerRouteMap.should.deepEqual({ '/test/route': ['get'] })
+  })
+
+  it('should register a provider route, uppercased', () => {
+    const mockServer = sinon.spy({
+      get: () => {}
+    })
+
+    const mockProvider = {
+      namespace: 'mock-provider',
+      hosts: true,
+      disableIdParam: false,
+      routes: [{
+        path: '/test/route',
+        methods: ['GET'],
+        handler: 'testHandler'
+      }]
+    }
+    const providerRouteMap = registerProviderRoutes({
+      provider: mockProvider,
+      controller: mockController,
+      server: mockServer
+    })
+
+    mockServer.get.should.be.calledOnce()
+    providerRouteMap.should.deepEqual({ '/test/route': ['GET'] })
   })
 
   it('should throw an error if handler not found on Koop controller', () => {

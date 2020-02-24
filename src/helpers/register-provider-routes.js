@@ -1,4 +1,5 @@
 const path = require('path')
+const validateHttpMethods = require('./validate-http-methods')
 
 const composePath = (routePrefix, routeString) => path.posix.join(routePrefix, routeString)
 function registerProviderRoutes ({ provider, controller, server }, options = {}) {
@@ -8,7 +9,10 @@ function registerProviderRoutes ({ provider, controller, server }, options = {})
 
   routes.forEach(route => {
     const { path, methods } = route
+    validateHttpMethods(methods)
+
     const composedPath = composePath(routePrefix, path)
+
     registerRoutes({
       server,
       path: composedPath,
@@ -37,7 +41,7 @@ function registerRoutes (params) {
   } = params
 
   methods.forEach(method => {
-    server[method](path, controller)
+    server[method.toLowerCase()](path, controller)
   })
 }
 

@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const validateHttpMethods = require('./validate-http-methods')
 const composeRouteString = require('./compose-route-string')
 
 function registerProviderRoutes ({ provider, controller, server, pluginRoutes }, options = {}) {
@@ -9,6 +10,7 @@ function registerProviderRoutes ({ provider, controller, server, pluginRoutes },
 
   pluginRoutes.forEach(route => {
     const { path, methods, absolutePath, output } = route
+    validateHttpMethods(methods)
 
     const routeString = composeRouteString(path, namespace, {
       hosts,
@@ -47,7 +49,7 @@ function registerRoutes (params) {
   } = params
 
   methods.forEach(method => {
-    server[method](routeString, controller)
+    server[method.toLowerCase()](routeString, controller)
   })
 }
 
