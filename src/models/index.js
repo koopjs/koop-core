@@ -31,7 +31,7 @@ Model.prototype.pull = function (req, callback) {
 
 Model.prototype.pullLayer = function (req, callback) {
   const key = (this.createKey) ? this.createKey(req) : createKey(req)
-  const layerKey = `${key}::layer`;
+  const layerKey = `${key}::layer`
   this.cache.retrieve(layerKey, req.query, (err, cached) => {
     if (!err && isFresh(cached)) {
       callback(null, cached)
