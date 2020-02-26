@@ -29,6 +29,9 @@ Model.prototype.pull = function (req, callback) {
   })
 }
 
+// TODO: the pullLayer() and the pullCatalog() are very similar to the pull()
+// function. We may consider to merging them in the future.
+
 Model.prototype.pullLayer = function (req, callback) {
   const key = (this.createKey) ? this.createKey(req) : createKey(req)
   const layerKey = `${key}::layer`
@@ -74,6 +77,8 @@ function createKey (req) {
 }
 
 function isFresh (geojson) {
+  // TODO: if the cache plugin developer forgets to set the metadata.expires,
+  // the data will be forever fresh. This should be fixed.
   if (!geojson || !geojson.metadata || !geojson.metadata.expires) return true
   else return Date.now() < geojson.metadata.expires
 }
