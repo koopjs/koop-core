@@ -297,11 +297,11 @@ describe('Tests for models/index', function () {
         }
       })
 
-      model.pullLayer({ url: 'domain/test-provider', params: {}, query: {} }, callbackSpy)
+      model.pullCatalog({ url: 'domain/test-provider', params: {}, query: {} }, callbackSpy)
 
       retrieveSpy.should.be.calledOnce()
       retrieveSpy.firstCall.args.length.should.equal(3)
-      retrieveSpy.firstCall.args[0].should.equal('test-provider::layer')
+      retrieveSpy.firstCall.args[0].should.equal('test-provider::catalog')
       retrieveSpy.firstCall.args[1].should.be.an.Object().and.be.empty()
       retrieveSpy.firstCall.args[2].should.be.an.Function()
       getCatalogSpy.should.not.be.called()
