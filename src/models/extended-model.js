@@ -10,10 +10,10 @@ module.exports = class ExtendedModel {
         // Merging the koop object into options to preserve backward compatibility; consider removing in Koop 4.x
         const modelOptions = _.chain(options).omit(options, 'cache', 'before', 'after').assign(koop).value()
         super(modelOptions)
-        this.cache = options.cache || koop.cache
+        if (!this.cache) this.cache = options.cache || koop.cache
+        if (!this.options) this.options = modelOptions
         this.before = options.before
         this.after = options.after
-        this.options = modelOptions
       }
 
       pull (req, callback) {

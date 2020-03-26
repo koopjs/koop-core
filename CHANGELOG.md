@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* Change order of cache and options assignment to maintain backward compatability
+
 ## [3.17.2] - 2020-03-26
 ### Added
 * New functions to support fetching metadata for data catalog and layer
