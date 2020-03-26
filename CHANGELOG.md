@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Fixed
-* Change order of cache and options assignment to maintain backward compatability
+* Prevent overwriting cache and option assignments that occur in provider model constructors
 
 ## [3.17.2] - 2020-03-26
 ### Added
