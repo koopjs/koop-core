@@ -31,7 +31,7 @@
   "devDependencies": {
     "buble": "^0.20.0",
     "gh-release": "^3.5.0",
-    "husky": "^4.2.3",
+    "husky": "^4.2.5",
     "lint-staged": "^10.1.7",
     "mocha": "^7.1.2",
     "should": "^13.2.3",
