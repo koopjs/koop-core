@@ -9,11 +9,11 @@ const _ = require('lodash')
 const Joi = require('@hapi/joi')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
-const datasetRoutes = require('./routes-datasets')
+const datasetRoutes = require('./datasets/routes')
 const {
   bindAuthMethods
 } = require('./helpers')
-const Provider = require('./provider')
+const Provider = require('./provider/provider')
 const middleware = require('./middleware')
 const Events = require('events')
 const Util = require('util')
@@ -59,14 +59,13 @@ function Koop (config) {
     })
     .get('/status', (req, res) => res.json(this.status))
 
-  // registerDatasetProvider({ koop: this, routes: datasetRoutes })
   this.providers.push(Provider.create({
     koop: this,
     provider: {
       namespace: 'datasets',
       routes: datasetRoutes,
-      Model: require('./models/dataset'),
-      Controller: require('./controllers/dataset')
+      Model: require('./datasets/model'),
+      Controller: require('./datasets/controller')
     }
   }))
 }

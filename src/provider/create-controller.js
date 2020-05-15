@@ -14,5 +14,6 @@ module.exports = function createController (ProviderController = DefaultControll
   }, {})
   Object.assign(controller, controllerEnumerables)
   controller.routes = controller.routes || []
+  controller.namespace = ProviderController.name
   return controller
 }

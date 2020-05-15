@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const routeJoiner = require('./route-joiner')
 const KOOP_PARAMS_PLACEHOLDER = '$providerParams'
 const PROVIDER_NAMESPACE_PLACEHOLDER = '$namespace'
@@ -9,10 +8,10 @@ function namespacedRoutePath (params) {
     disableIdParam,
     routePrefix = '',
     namespace = '',
-    route: {
-      absolutePath,
-      path
-    }
+
+    absolutePath,
+    path
+
   } = params
 
   // No compostion needed if flagged as an absolute route

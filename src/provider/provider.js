@@ -3,13 +3,13 @@ const createController = require('./create-controller')
 const ExtendedModel = require('./extended-model')
 const ProviderRoute = require('./provider-route')
 const ProviderOutputRoute = require('./provider-output-route')
-
-class DefaultController {}
+const consolePrinting = require('../helpers/console-printing')
 
 module.exports = class Provider {
   static create (params) {
     const provider = new Provider(params)
-    provider.registerRoutes()
+    provider.registerRoutes(params.koop.server)
+    consolePrinting(provider)
     return provider
   }
 
@@ -20,38 +20,37 @@ module.exports = class Provider {
       options = {}
     } = params
 
-    // Object.assign(this, provider)
-    this.server = koop.server
     this.options = { ...options, ..._.pick(provider, 'hosts', 'disableIdParam') }
     this.registerOutputRoutesFirst = _.get(options, 'defaultToOutputRoutes', false).toString() === 'true'
     this.namespace = getProviderName(provider, options)
     this.outputRouteNamespace = this.namespace.replace(/\s/g, '').toLowerCase()
     this.model = new ExtendedModel({ ProviderModel: provider.Model, koop }, options)
     this.routes = provider.routes || []
-    this.outputRoutes = []
+    this.registeredOutputs = []
     this.outputs = koop.outputs.map(Output => {
       return createController(Output, this.model)
     })
     this.controller = createController(provider.Controller, this.model)
   }
 
-  registerRoutes () {
+  registerRoutes (server) {
     if (this.registerOutputRoutesFirst) {
-      this.registerOutputPluginRoutes()
-      this.registerProviderDefinedRoutes()
+      this.registerOutputPluginRoutes(server)
+      this.registerProviderDefinedRoutes(server)
     } else {
-      this.registerProviderDefinedRoutes()
-      this.registerOutputPluginRoutes()
+      this.registerProviderDefinedRoutes(server)
+      this.registerOutputPluginRoutes(server)
     }
   }
 
-  registerOutputPluginRoutes () {
+  registerOutputPluginRoutes (server) {
     const params = {
+      ...this,
       ...this.options,
       namespace: this.outputRouteNamespace,
-      server: this.server
+      server
     }
-    this.outputRoutes = this.outputs.map(output => {
+    this.registeredOutputs = this.outputs.map(output => {
       const routes = output.routes.map(route => {
         return ProviderOutputRoute.create({ ...params, controller: output, route })
       })
@@ -59,22 +58,22 @@ module.exports = class Provider {
     })
   }
 
-  registerProviderDefinedRoutes () {
-    this.providerDefinedRoutes = this.routes.map(route => {
-      return ProviderRoute.create({ ...this, controller: this.controller, route, namespace: '' })
+  registerProviderDefinedRoutes (server) {
+    const params = {
+      ...this,
+      ...this.options,
+      server
+    }
+    this.registeredProviderRoutes = this.routes.map(route => {
+      return ProviderRoute.create({ ...params, controller: this.controller, route })
     })
   }
 
   logRoutes () {
-    this.outputRoutes.forEach(route => {
+    this.registeredOutputs.forEach(route => {
       console.log(route)
     })
   }
-}
-
-function addMethodsToRouteMap (map, path, methods) {
-  const existingMethods = _.get(map, path, [])
-  _.set(map, path, _.concat(existingMethods, methods))
 }
 
 function getProviderName (provider, options) {

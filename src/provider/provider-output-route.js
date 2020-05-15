@@ -1,11 +1,11 @@
 
 const ProviderRoute = require('./provider-route')
-const namespacedRoutePath = require('./helpers/namespaced-route-path')
+const namespacedRoutePath = require('../helpers/namespaced-route-path')
 
 class ProviderOutputRoute extends ProviderRoute {
   static create (params) {
     const providerRoute = new ProviderOutputRoute(params)
-    providerRoute.addRouteToServer()
+    providerRoute.addRouteToServer(params.server)
     return providerRoute
   }
 

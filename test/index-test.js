@@ -3,8 +3,6 @@ const _ = require('lodash')
 const provider = require('./fixtures/fake-provider')
 const auth = require('./fixtures/fake-auth')()
 const Koop = require('../src/')
-const Provider = require('../src/provider')
-const Controller = require('../src/controllers')
 const Geoservices = require('koop-output-geoservices')
 const request = require('supertest')
 const should = require('should') // eslint-disable-line
@@ -28,7 +26,7 @@ describe('Index tests', function () {
     it('should register provider and add output and provider routes to router stack', function () {
       const koop = new Koop()
       koop.register(provider)
-      const registeredProvider = koop.providers.find(provider => { return provider.namespace = 'test-provider' })
+      const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'test-provider' })
       registeredProvider.should.have.property('namespace', 'test-provider')
       // Check that the stack includes routes with the provider name in the path
       const providerRoutes = koop.server._router.stack
@@ -168,13 +166,14 @@ describe('Index tests', function () {
       koop.register(provider, {
         name: 'options-name'
       })
-      const registeredProvider = koop.providers.find(provider => { return provider.namespace = 'options-name' })
+      const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'options-name' })
+      registeredProvider.should.have.property('namespace', 'options-name')
       // Check that the stack includes routes with the provider name in the path
       const providerRoutes = koop.server._router.stack
         .filter((layer) => { return _.has(layer, 'route.path') })
         .map(layer => { return _.get(layer, 'route.path') })
-        .filter(path => path.includes('options-name') || path.includes('/fake/:id'))
-      providerRoutes.length.should.equal(geoservicesFixtureRoutes + providerFixtureRoutes)
+        .filter(path => path.includes('options-name'))
+      providerRoutes.length.should.equal(geoservicesFixtureRoutes)
     })
   })
 

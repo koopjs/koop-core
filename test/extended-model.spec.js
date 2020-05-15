@@ -4,7 +4,7 @@ const sinon = require('sinon')
 require('should-sinon')
 const _ = require('lodash')
 const providerMock = require('./fixtures/fake-provider')
-const ExtendedModel = require('../src/models/extended-model')
+const ExtendedModel = require('../src/provider/extended-model')
 const koopMock = { test: 'value' }
 
 describe('Tests for models/index', function () {
