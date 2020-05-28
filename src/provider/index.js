@@ -10,7 +10,7 @@ module.exports = class Provider {
   static create (params) {
     const provider = new Provider(params)
     provider.registerRoutes(params.koop.server)
-    // provider.logRoutes()
+    provider.logRoutes()
     return provider
   }
 
