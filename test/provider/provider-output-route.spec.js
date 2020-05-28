@@ -1,9 +1,9 @@
 const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
-const mockProviderPlugin = require('./fixtures/fake-provider')
-const mockOutputPlugin = require('./fixtures/output')
-const ProviderOutputRoute = require('../src/provider/provider-output-route')
-const Provider = require('../src/provider')
+const mockProviderPlugin = require('../fixtures/fake-provider')
+const mockOutputPlugin = require('../fixtures/output')
+const ProviderOutputRoute = require('../../src/provider/provider-output-route')
+const Provider = require('../../src/provider')
 
 describe('Tests for ProviderOutputRoute', function () {
   it('should create instance of ProviderOutputRoute', function () {

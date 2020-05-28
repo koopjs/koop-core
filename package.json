@@ -61,7 +61,7 @@
     "release": "gh-release",
     "clean": "rm -rf dist",
     "compile": "buble -i src -o dist",
-    "test": "standard && mocha test -t 5000"
+    "test": "standard && mocha test --recursive -t 5000"
   },
   "standard": {
     "globals": [
