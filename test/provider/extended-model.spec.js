@@ -3,8 +3,8 @@ const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 require('should-sinon')
 const _ = require('lodash')
-const providerMock = require('./fixtures/fake-provider')
-const ExtendedModel = require('../src/provider/extended-model')
+const providerMock = require('../fixtures/fake-provider')
+const ExtendedModel = require('../../src/provider/extended-model')
 const koopMock = { test: 'value' }
 
 describe('Tests for extended-model', function () {
