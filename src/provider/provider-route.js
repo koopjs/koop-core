@@ -3,6 +3,9 @@ const routeJoiner = require('../helpers/route-joiner')
 
 const METHODS_SCHEMA = Joi.array().items(Joi.string().valid('get', 'post', 'patch', 'put', 'delete', 'head').insensitive())
 
+/**
+ * Properties/methods used to define Koop provider routes
+ */
 class ProviderRoute {
   static create (params) {
     const providerRoute = new ProviderRoute(params)
@@ -11,25 +14,10 @@ class ProviderRoute {
   }
 
   constructor (params) {
-    const {
-      route,
-      controller,
-      hosts,
-      disableIdParam,
-      routePrefix,
-      namespace
-    } = params
-    Object.assign(this, {
-      ...route,
-      controller,
-      hosts,
-      disableIdParam,
-      routePrefix,
-      namespace
-    })
+    Object.assign(this, params)
     this.validateHttpMethods()
     this.validateController()
-    this.routeController = this.controller[this.handler].bind(this.controller)
+    this.routeHandler = this.controller[this.handler].bind(this.controller)
   }
 
   validateController () {
@@ -49,7 +37,7 @@ class ProviderRoute {
   addRouteToServer (server) {
     this.registeredPath = this.getRoutePath()
     this.methods.forEach(method => {
-      server[method.toLowerCase()](this.registeredPath, this.routeController)
+      server[method.toLowerCase()](this.registeredPath, this.routeHandler)
     })
   }
 

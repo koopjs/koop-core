@@ -13,7 +13,7 @@ const datasetRoutes = require('./datasets/routes')
 const {
   bindAuthMethods
 } = require('./helpers')
-const Provider = require('./provider/provider')
+const Provider = require('./provider')
 const middleware = require('./middleware')
 const Events = require('events')
 const Util = require('util')
@@ -143,6 +143,7 @@ Koop.prototype._registerProvider = function (provider, options = {}) {
   provider.version = provider.version || '(version missing)'
 
   // If an authentication module has been registered, apply it to the provider's Model
+  // TODO: move this to Provider class
   if (this._auth_module) bindAuthMethods({ provider, auth: this._auth_module })
 
   // if a provider has a status object store it

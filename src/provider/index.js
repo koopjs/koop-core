@@ -1,15 +1,16 @@
+const chalk = require('chalk')
+const Table = require('easy-table')
 const _ = require('lodash')
 const createController = require('./create-controller')
 const ExtendedModel = require('./extended-model')
 const ProviderRoute = require('./provider-route')
 const ProviderOutputRoute = require('./provider-output-route')
-const consolePrinting = require('../helpers/console-printing')
 
 module.exports = class Provider {
   static create (params) {
     const provider = new Provider(params)
     provider.registerRoutes(params.koop.server)
-    consolePrinting(provider)
+    provider.logRoutes()
     return provider
   }
 
@@ -23,14 +24,14 @@ module.exports = class Provider {
     this.options = { ...options, ..._.pick(provider, 'hosts', 'disableIdParam') }
     this.registerOutputRoutesFirst = _.get(options, 'defaultToOutputRoutes', false).toString() === 'true'
     this.namespace = getProviderName(provider, options)
-    this.outputRouteNamespace = this.namespace.replace(/\s/g, '').toLowerCase()
+    this.outputRouteNamespace = this.namespace.replace(/\s/g, '-').toLowerCase()
     this.model = new ExtendedModel({ ProviderModel: provider.Model, koop }, options)
     this.routes = provider.routes || []
     this.registeredOutputs = []
     this.outputs = koop.outputs.map(Output => {
-      return createController(Output, this.model)
+      return createController(this.model, Output)
     })
-    this.controller = createController(provider.Controller, this.model)
+    this.controller = createController(this.model, provider.Controller)
   }
 
   registerRoutes (server) {
@@ -52,7 +53,7 @@ module.exports = class Provider {
     }
     this.registeredOutputs = this.outputs.map(output => {
       const routes = output.routes.map(route => {
-        return ProviderOutputRoute.create({ ...params, controller: output, route })
+        return ProviderOutputRoute.create({ ...params, controller: output, ...route })
       })
       return { namespace: output.namespace, routes }
     })
@@ -65,13 +66,41 @@ module.exports = class Provider {
       server
     }
     this.registeredProviderRoutes = this.routes.map(route => {
-      return ProviderRoute.create({ ...params, controller: this.controller, route })
+      return ProviderRoute.create({ ...params, ...route })
     })
   }
 
   logRoutes () {
-    this.registeredOutputs.forEach(route => {
-      console.log(route)
+    if (process.env.NODE_ENV === 'test') return
+
+    if (this.registerOutputRoutesFirst) {
+      this.logOutputDefinedRoutes()
+      this.logProviderDefinedRoutes()
+    } else {
+      this.logProviderDefinedRoutes()
+      this.logOutputDefinedRoutes()
+    }
+  }
+
+  logProviderDefinedRoutes () {
+    const table = new Table()
+    this.registeredProviderRoutes.forEach(route => {
+      table.cell(chalk.cyan(`"${this.namespace}" provider routes`), chalk.yellow(route.registeredPath))
+      table.cell(chalk.cyan('Methods'), chalk.green(route.methods.join(', ').toUpperCase()))
+      table.newRow()
+    })
+    console.log(`\n${table.toString()}`)
+  }
+
+  logOutputDefinedRoutes () {
+    this.registeredOutputs.forEach(output => {
+      const table = new Table()
+      output.routes.forEach(route => {
+        table.cell(chalk.cyan(`"${output.namespace}" output routes for the "${this.namespace}" provider`), chalk.yellow(route.registeredPath))
+        table.cell(chalk.cyan('Methods'), chalk.green(route.methods.join(', ').toUpperCase()))
+        table.newRow()
+      })
+      console.log(`\n${table.toString()}`)
     })
   }
 }

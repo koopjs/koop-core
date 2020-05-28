@@ -4,7 +4,7 @@ const after = (req, data, callback) => { callback(null, data) }
 
 module.exports = class ExtendedModel {
   constructor ({ ProviderModel, koop }, options = {}) {
-    // Extend the passsed in provider model
+    // Extend the passed in provider model
     class Model extends ProviderModel {
       constructor (koop, options) {
         // Merging the koop object into options to preserve backward compatibility; consider removing in Koop 4.x

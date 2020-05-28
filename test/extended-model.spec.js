@@ -7,7 +7,7 @@ const providerMock = require('./fixtures/fake-provider')
 const ExtendedModel = require('../src/provider/extended-model')
 const koopMock = { test: 'value' }
 
-describe('Tests for models/index', function () {
+describe('Tests for extended-model', function () {
   describe('createKey', function () {
     it('should create cache-key as provider name', () => {
       const retrieveSpy = sinon.spy(function (key, queryParams, callback) {
