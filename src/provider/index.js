@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const Table = require('easy-table')
 const _ = require('lodash')
 const createController = require('./create-controller')
-const ExtendedModel = require('./extended-model')
+const createModel = require('./create-model')
 const ProviderRoute = require('./provider-route')
 const ProviderOutputRoute = require('./provider-output-route')
 
@@ -25,7 +25,7 @@ module.exports = class Provider {
     this.registerOutputRoutesFirst = _.get(options, 'defaultToOutputRoutes', false).toString() === 'true'
     this.namespace = getProviderName(provider, options)
     this.outputRouteNamespace = this.namespace.replace(/\s/g, '-').toLowerCase()
-    this.model = new ExtendedModel({ ProviderModel: provider.Model, koop }, options)
+    this.model = createModel({ ProviderModel: provider.Model, koop }, options)
     this.routes = provider.routes || []
     this.registeredOutputs = []
     this.outputs = koop.outputs.map(Output => {
