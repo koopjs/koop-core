@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Refactored provider registration, output registration, and controller treatment.
+
 ## [3.19.1] - 2020-06-29
 ### Fixed
 * Dist directory build
