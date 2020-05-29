@@ -9,17 +9,11 @@ const _ = require('lodash')
 const Joi = require('@hapi/joi')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
-const datasetRoutes = require('./routes-datasets')
-const Controller = require('./controllers')
-const ExtendedModel = require('./models/extended-model')
-const DatasetController = require('./controllers/dataset')
+const datasetRoutes = require('./datasets/routes')
 const {
-  registerDatasetProvider,
-  registerProviderRoutes,
-  registerPluginRoutes,
-  consolePrinting,
   bindAuthMethods
 } = require('./helpers')
+const Provider = require('./provider')
 const middleware = require('./middleware')
 const Events = require('events')
 const Util = require('util')
@@ -48,7 +42,9 @@ function Koop (config) {
   // cache registration overrides this
   this.cache = new Cache()
   this.log = new Logger(this.config)
+  this.providers = []
   this.pluginRoutes = []
+  this.outputs = []
   this.register(geoservices)
   this.register(LocalFS)
   this.controllers = {}
@@ -63,7 +59,15 @@ function Koop (config) {
     })
     .get('/status', (req, res) => res.json(this.status))
 
-  registerDatasetProvider({ koop: this, routes: datasetRoutes })
+  this.providers.push(Provider.create({
+    koop: this,
+    provider: {
+      namespace: 'datasets',
+      routes: datasetRoutes,
+      Model: require('./datasets/model'),
+      Controller: require('./datasets/controller')
+    }
+  }))
 }
 
 Util.inherits(Koop, Events)
@@ -135,42 +139,23 @@ Koop.prototype._registerAuth = function (auth) {
 Koop.prototype._registerProvider = function (provider, options = {}) {
   validateAgainstSchema(options, providerOptionsSchema, 'provider options')
 
-  provider.namespace = getProviderName(provider, options)
+  const namespace = getProviderName(provider, options)
   provider.version = provider.version || '(version missing)'
 
   // If an authentication module has been registered, apply it to the provider's Model
+  // TODO: move this to Provider class
   if (this._auth_module) bindAuthMethods({ provider, auth: this._auth_module })
-
-  // Need a new copy of Model otherwise providers will step on each other
-  const model = new ExtendedModel({ ProviderModel: provider.Model, koop: this }, options)
-
-  // controller is optional
-  let controller
-  if (provider.Controller) {
-    Util.inherits(provider.Controller, Controller)
-    controller = new provider.Controller(model)
-  } else {
-    controller = new Controller(model)
-  }
-
-  this.controllers[provider.namespace] = controller
 
   // if a provider has a status object store it
   // TODO: deprecate & serve more meaningful status reports dynamically.
   if (provider.status) {
-    this.status.providers[provider.namespace] = provider.status
+    this.status.providers[namespace] = provider.status
     provider.version = provider.status.version
   }
 
-  const registeredRoutes = registerRoutes({
-    provider,
-    controller,
-    server: this.server,
-    pluginRoutes: this.pluginRoutes
-  }, options)
-  consolePrinting(provider.namespace, registeredRoutes)
-
-  this.log.info('registered provider:', provider.namespace, provider.version)
+  const extendedProvider = Provider.create({ koop: this, provider, options })
+  this.providers.push(extendedProvider)
+  this.log.info('registered provider:', namespace, provider.version)
 }
 
 /**
@@ -180,45 +165,8 @@ Koop.prototype._registerProvider = function (provider, options = {}) {
  * @param {object} output - the output plugin to be registered
  */
 Koop.prototype._registerOutput = function (Output) {
-  extend(Controller, Output)
-  extend(DatasetController, Output)
-  const routes = Output.routes.map(function (route) {
-    route.output = Output.name
-    return route
-  })
-  this.pluginRoutes = this.pluginRoutes.concat(routes)
+  this.outputs.push(Output)
   this.log.info('registered output:', Output.name, Output.version)
-}
-
-function extend (klass, extender) {
-  for (const p in extender.prototype) {
-    klass.prototype[p] = extender.prototype[p]
-  }
-}
-
-/**
- * binds each route from provider routes object to corresponding controller handler
- *
- * @param {object} provider - a registered koop provider
- * @param {object} controller - the initiated provider's controller
- * @param {object} server - the koop express server
- */
-function registerRoutes ({ provider, controller, server, pluginRoutes }, options = {}) {
-  // Plugin and provider-routes may conflict; which ever is registered first gets precendence; default is provider route precedence
-  if (options.defaultToOutputRoutes) return registerPluginRoutesFirst({ provider, controller, server, pluginRoutes }, options)
-  return registerProviderRoutesFirst({ provider, controller, server, pluginRoutes }, options)
-}
-
-function registerPluginRoutesFirst ({ provider, controller, server, pluginRoutes }, options = {}) {
-  const pluginRouteMap = registerPluginRoutes({ provider, controller, server, pluginRoutes }, options)
-  const providerRouteMap = registerProviderRoutes({ provider, controller, server }, options)
-  return { providerRouteMap, pluginRouteMap }
-}
-
-function registerProviderRoutesFirst ({ provider, controller, server, pluginRoutes }, options = {}) {
-  const providerRouteMap = registerProviderRoutes({ provider, controller, server }, options)
-  const pluginRouteMap = registerPluginRoutes({ provider, controller, server, pluginRoutes }, options)
-  return { providerRouteMap, pluginRouteMap }
 }
 
 /**
