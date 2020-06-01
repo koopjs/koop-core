@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Changed
 * Refactored provider registration, output registration, and controller treatment.
+* Removed `dist`
 
 ## [3.19.1] - 2020-06-29
 ### Fixed

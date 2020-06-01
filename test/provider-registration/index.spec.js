@@ -2,9 +2,9 @@ const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 const mockProviderPlugin = require('../fixtures/fake-provider')
 const mockOutputPlugin = require('../fixtures/output')
-const Provider = require('../../src/provider')
-const ProviderRoute = require('../../src/provider/provider-route')
-const ProviderOutputRoute = require('../../src/provider/provider-output-route')
+const ProviderRegistration = require('../../src/provider-registration')
+const ProviderRoute = require('../../src/provider-registration/provider-route')
+const ProviderOutputRoute = require('../../src/provider-registration/provider-output-route')
 
 describe('Tests for Provider', function () {
   it('should create instance of ProviderRoute', function () {
@@ -16,8 +16,8 @@ describe('Tests for Provider', function () {
       server: serverSpy,
       outputs: [mockOutputPlugin]
     }
-    const provider = Provider.create({ koop: koopMock, provider: { ...mockProviderPlugin, hosts: true } })
-    provider.should.be.instanceOf(Provider)
+    const provider = ProviderRegistration.create({ koop: koopMock, provider: { ...mockProviderPlugin, hosts: true } })
+    provider.should.be.instanceOf(ProviderRegistration)
     provider.should.have.property('options').deepEqual({ hosts: true })
     provider.should.have.property('namespace', 'test-provider')
     provider.should.have.property('outputRouteNamespace', 'test-provider')

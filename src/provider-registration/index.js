@@ -6,9 +6,9 @@ const createModel = require('./create-model')
 const ProviderRoute = require('./provider-route')
 const ProviderOutputRoute = require('./provider-output-route')
 
-module.exports = class Provider {
+module.exports = class ProviderRegistration {
   static create (params) {
-    const provider = new Provider(params)
+    const provider = new ProviderRegistration(params)
     provider.registerRoutes(params.koop.server)
     provider.logRoutes()
     return provider

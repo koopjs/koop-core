@@ -13,7 +13,7 @@ const datasetRoutes = require('./datasets/routes')
 const {
   bindAuthMethods
 } = require('./helpers')
-const Provider = require('./provider')
+const ProviderRegistration = require('./provider-registration')
 const middleware = require('./middleware')
 const Events = require('events')
 const Util = require('util')
@@ -59,7 +59,7 @@ function Koop (config) {
     })
     .get('/status', (req, res) => res.json(this.status))
 
-  this.providers.push(Provider.create({
+  this.providers.push(ProviderRegistration.create({
     koop: this,
     provider: {
       namespace: 'datasets',
@@ -153,7 +153,7 @@ Koop.prototype._registerProvider = function (provider, options = {}) {
     provider.version = provider.status.version
   }
 
-  const extendedProvider = Provider.create({ koop: this, provider, options })
+  const extendedProvider = ProviderRegistration.create({ koop: this, provider, options })
   this.providers.push(extendedProvider)
   this.log.info('registered provider:', namespace, provider.version)
 }
