@@ -2,7 +2,7 @@
 const _ = require('lodash')
 const provider = require('./fixtures/fake-provider')
 const auth = require('./fixtures/fake-auth')()
-const Koop = require('../index')
+const Koop = require('../')
 const Geoservices = require('koop-output-geoservices')
 const request = require('supertest')
 const should = require('should') // eslint-disable-line
