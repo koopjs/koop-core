@@ -4,17 +4,17 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const compression = require('compression')
-const pkg = require('../package.json')
+const pkg = require('./package.json')
 const _ = require('lodash')
 const Joi = require('@hapi/joi')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
-const datasetRoutes = require('./datasets/routes')
+const datasetRoutes = require('./lib/datasets/routes')
 const {
   bindAuthMethods
-} = require('./helpers')
-const ProviderRegistration = require('./provider-registration')
-const middleware = require('./middleware')
+} = require('./lib/helpers')
+const ProviderRegistration = require('./lib/provider-registration')
+const middleware = require('./lib/middleware')
 const Events = require('events')
 const Util = require('util')
 const path = require('path')
@@ -47,7 +47,6 @@ function Koop (config) {
   this.outputs = []
   this.register(geoservices)
   this.register(LocalFS)
-  this.controllers = {}
   this.status = {
     version: this.version,
     providers: {}
@@ -64,8 +63,8 @@ function Koop (config) {
     provider: {
       namespace: 'datasets',
       routes: datasetRoutes,
-      Model: require('./datasets/model'),
-      Controller: require('./datasets/controller')
+      Model: require('./lib/datasets/model'),
+      Controller: require('./lib/datasets/controller')
     }
   }))
 }

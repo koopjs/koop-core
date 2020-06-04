@@ -1,4 +1,4 @@
-const Koop = require('../src')
+const Koop = require('../')
 const koop = new Koop()
 const request = require('supertest')
 const geojson = require('./fixtures/snow.json')
