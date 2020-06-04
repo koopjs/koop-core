@@ -1,7 +1,7 @@
 const should = require('should') // eslint-disable-line
 const sinon = require('sinon')
 require('should-sinon')
-const bindAuthMethods = require('../../helpers/bind-auth-methods')
+const bindAuthMethods = require('../../lib/helpers/bind-auth-methods')
 
 const mockProvider = {
   namespace: 'test-provider',
