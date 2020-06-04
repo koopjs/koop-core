@@ -1,6 +1,6 @@
 const should = require('should') // eslint-disable-line
 
-const createController = require('../../src/provider-registration/create-controller')
+const createController = require('../../lib/provider-registration/create-controller')
 
 describe('Tests for create-controller', function () {
   it('should extend a controller authored with function syntax', () => {
