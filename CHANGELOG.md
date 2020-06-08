@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [3.19.0-alpha.0] - 2020-06-08
 ### Changed
 * Refactored provider registration, output registration, and controller treatment.
 * Removed `dist`
@@ -905,6 +905,7 @@ Koop is now just a node module that exposes an express middleware app with hooks
   - koop-server is no more; all central code is in the koop project
   - to use Koop you must use it as middleware in an app that boots up an http server
 
+[3.19.0-alpha.0] https://github.com/koopjs/koop-core/compare/v3.17.3...v3.18.0
 [3.18.0]: https://github.com/koopjs/koop-core/compare/v3.17.3...v3.18.0
 [3.17.3]: https://github.com/koopjs/koop-core/compare/v3.17.2...v3.17.3
 [3.17.2]: https://github.com/koopjs/koop-core/compare/v3.17.1...v3.17.2
