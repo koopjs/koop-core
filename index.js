@@ -9,7 +9,7 @@ const _ = require('lodash')
 const Joi = require('@hapi/joi')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
-const datasetRoutes = require('./lib/datasets/routes')
+const datasetsProvider = require('./lib/datasets')
 const {
   bindAuthMethods
 } = require('./lib/helpers')
@@ -47,6 +47,7 @@ function Koop (config) {
   this.outputs = []
   this.register(geoservices)
   this.register(LocalFS)
+  this.register(datasetsProvider)
   this.status = {
     version: this.version,
     providers: {}
@@ -57,16 +58,6 @@ function Koop (config) {
       this.log.info(`Koop ${this.version} mounted at ${this.server.mountpath}`)
     })
     .get('/status', (req, res) => res.json(this.status))
-
-  this.providers.push(ProviderRegistration.create({
-    koop: this,
-    provider: {
-      namespace: 'datasets',
-      routes: datasetRoutes,
-      Model: require('./lib/datasets/model'),
-      Controller: require('./lib/datasets/controller')
-    }
-  }))
 }
 
 Util.inherits(Koop, Events)
