@@ -6,7 +6,6 @@ const cors = require('cors')
 const compression = require('compression')
 const pkg = require('./package.json')
 const _ = require('lodash')
-const Joi = require('@hapi/joi')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
 const datasetRoutes = require('./lib/datasets/routes')
@@ -20,18 +19,6 @@ const Util = require('util')
 const path = require('path')
 const geoservices = require('koop-output-geoservices')
 const LocalFS = require('koop-localfs')
-
-const providerOptionsSchema = Joi.object({
-  cache: Joi.object().keys({
-    retrieve: Joi.function().arity(3).required(),
-    upsert: Joi.function().arity(3).required()
-  }).unknown(true).optional(),
-  routePrefix: Joi.string().optional(),
-  before: Joi.function().arity(2).optional(),
-  after: Joi.function().arity(3).optional(),
-  name: Joi.string().optional(),
-  defaultToOutputRoutes: Joi.boolean().optional()
-}).unknown(true)
 
 function Koop (config) {
   this.version = pkg.version
@@ -136,8 +123,6 @@ Koop.prototype._registerAuth = function (auth) {
  * @param {object} provider - the provider to be registered
  */
 Koop.prototype._registerProvider = function (provider, options = {}) {
-  validateAgainstSchema(options, providerOptionsSchema, 'provider options')
-
   const namespace = getProviderName(provider, options)
   provider.version = provider.version || '(version missing)'
 
@@ -209,11 +194,6 @@ Koop.prototype._registerPlugin = function (Plugin) {
   }
   this[name] = new Plugin(dependencies)
   this.log.info('registered plugin:', name, Plugin.version)
-}
-
-function validateAgainstSchema (params, schema, prefix) {
-  const result = schema.validate(params)
-  if (result.error) throw new Error(`${prefix} ${result.error}`)
 }
 
 function getProviderName (provider, options) {
