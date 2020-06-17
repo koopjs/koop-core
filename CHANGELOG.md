@@ -4,8 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Changed
-* moved datasets provider to its own directory and leverage the registration function
+* Moved datasets provider to its own directory and leverage the registration function
 * Moved provider options validation to ProviderRegistration
+* Refactored provider _status_ info
 
 ### Fixed
 * path construction when no host or id parameter
