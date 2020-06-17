@@ -99,7 +99,7 @@ describe('Index tests', function () {
           }
         })
       } catch (err) {
-        err.should.have.property('message', 'provider options ValidationError: "cache.upsert" is required')
+        err.should.have.property('message', 'Provider options ValidationError: "cache.upsert" is required')
       }
     })
 
@@ -112,7 +112,7 @@ describe('Index tests', function () {
           }
         })
       } catch (err) {
-        err.should.have.property('message', 'provider options ValidationError: "cache.retrieve" is required')
+        err.should.have.property('message', 'Provider options ValidationError: "cache.retrieve" is required')
       }
     })
 
@@ -124,7 +124,7 @@ describe('Index tests', function () {
         })
         should.fail('should have thrown error')
       } catch (err) {
-        err.should.have.property('message', 'provider options ValidationError: "routePrefix" must be a string')
+        err.should.have.property('message', 'Provider options ValidationError: "routePrefix" must be a string')
       }
     })
 
@@ -146,7 +146,7 @@ describe('Index tests', function () {
           before: () => {}
         })
       } catch (err) {
-        err.should.have.property('message', 'provider options ValidationError: "before" must have an arity of 2')
+        err.should.have.property('message', 'Provider options ValidationError: "before" must have an arity of 2')
       }
     })
 
@@ -157,7 +157,7 @@ describe('Index tests', function () {
           after: () => {}
         })
       } catch (err) {
-        err.should.have.property('message', 'provider options ValidationError: "after" must have an arity of 3')
+        err.should.have.property('message', 'Provider options ValidationError: "after" must have an arity of 3')
       }
     })
 
