@@ -35,10 +35,6 @@ function Koop (config) {
   this.register(geoservices)
   this.register(LocalFS)
   this.register(datasetsProvider)
-  this.status = {
-    version: this.version,
-    providers: {}
-  }
 
   this.server
     .on('mount', () => {
@@ -114,23 +110,13 @@ Koop.prototype._registerAuth = function (auth) {
  * @param {object} provider - the provider to be registered
  */
 Koop.prototype._registerProvider = function (provider, options = {}) {
-  const namespace = getProviderName(provider, options)
-  provider.version = provider.version || '(version missing)'
-
   // If an authentication module has been registered, apply it to the provider's Model
   // TODO: move this to Provider class
   if (this._auth_module) bindAuthMethods({ provider, auth: this._auth_module })
 
-  // if a provider has a status object store it
-  // TODO: deprecate & serve more meaningful status reports dynamically.
-  if (provider.status) {
-    this.status.providers[namespace] = provider.status
-    provider.version = provider.status.version
-  }
-
-  const extendedProvider = ProviderRegistration.create({ koop: this, provider, options })
-  this.providers.push(extendedProvider)
-  this.log.info('registered provider:', namespace, provider.version)
+  const providerRegistration = ProviderRegistration.create({ koop: this, provider, options })
+  this.providers.push(providerRegistration)
+  this.log.info('registered provider:', providerRegistration.namespace, providerRegistration.version)
 }
 
 /**
@@ -185,10 +171,6 @@ Koop.prototype._registerPlugin = function (Plugin) {
   }
   this[name] = new Plugin(dependencies)
   this.log.info('registered plugin:', name, Plugin.version)
-}
-
-function getProviderName (provider, options) {
-  return options.name || provider.namespace || provider.pluginName || provider.plugin_name || provider.name
 }
 
 module.exports = Koop
