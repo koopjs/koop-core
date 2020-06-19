@@ -9,9 +9,6 @@ const _ = require('lodash')
 const Cache = require('koop-cache-memory')
 const Logger = require('@koopjs/logger')
 const datasetsProvider = require('./lib/datasets')
-const {
-  bindAuthMethods
-} = require('./lib/helpers')
 const ProviderRegistration = require('./lib/provider-registration')
 const middleware = require('./lib/middleware')
 const Events = require('events')
@@ -100,7 +97,7 @@ Koop.prototype.register = function (plugin, options) {
  * @param {object} auth
  */
 Koop.prototype._registerAuth = function (auth) {
-  this._auth_module = auth
+  this._authModule = auth
 }
 
 /**
@@ -110,10 +107,6 @@ Koop.prototype._registerAuth = function (auth) {
  * @param {object} provider - the provider to be registered
  */
 Koop.prototype._registerProvider = function (provider, options = {}) {
-  // If an authentication module has been registered, apply it to the provider's Model
-  // TODO: move this to Provider class
-  if (this._auth_module) bindAuthMethods({ provider, auth: this._auth_module })
-
   const providerRegistration = ProviderRegistration.create({ koop: this, provider, options })
   this.providers.push(providerRegistration)
   this.log.info('registered provider:', providerRegistration.namespace, providerRegistration.version)

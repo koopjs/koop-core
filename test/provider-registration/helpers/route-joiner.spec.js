@@ -1,4 +1,4 @@
-const routeJoiner = require('../../lib/helpers/route-joiner')
+const routeJoiner = require('../../../lib/provider-registration/helpers/route-joiner')
 const should = require('should') // eslint-disable-line
 
 describe('Tests for routeJoiner', function () {
