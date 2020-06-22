@@ -86,6 +86,24 @@ describe('Tests for create-model', function () {
     })
   })
 
+  describe('auth methods', () => {
+    const koopMock = {
+      test: 'value',
+      _authModule: {
+        authenticate: () => {},
+        authorize: () => {},
+        authenticationSpecification: sinon.spy()
+      }
+    }
+
+    it('should attach auth methods when auth plugin is registered with Koop', () => {
+      const model = createModel({ ProviderModel: providerMock.Model, namespace: 'test-provider', koop: koopMock })
+      model.should.have.property('authorize').and.be.a.Function()
+      model.should.have.property('authenticate').and.be.a.Function()
+      model.should.have.property('authenticationSpecification').and.deepEqual({ provider: 'test-provider' })
+    })
+  })
+
   describe('transformation functions', function () {
     it('before function should modify request object', () => {
       let beforeReq
