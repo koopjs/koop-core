@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const Table = require('easy-table')
 
 module.exports = function (namespace, routes) {
-  if (process.env.NODE_ENV === 'test') return
+  if (process.env.NODE_ENV === 'test' || process.env.KOOP_CONSOLE_ROUTES === 'suppress') { return }
 
   const { providerRouteMap, pluginRouteMap } = routes
   printProviderRoutes(namespace, providerRouteMap)
