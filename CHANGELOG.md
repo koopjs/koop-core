@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Fixed
-* Add ENV `KOOP_CONSOLE_ROUTES=suppress` to suppress console route logging.
+* Add ENV `KOOP_DISABLE_CONSOLE_ROUTES=true` to suppress console route logging.
 
 ## [3.18.0] - 2020-03-31
 ### Added
