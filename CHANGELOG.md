@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Changed
+* End support for Node < 6; remove Babel compilation to `/dist` directory and point package.json directly to non-compiled source files
 * Moved datasets provider to its own directory and leverage the registration function
 * Moved provider options validation to ProviderRegistration
 * Refactored provider _status_ info
