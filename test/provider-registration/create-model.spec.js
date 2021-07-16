@@ -535,11 +535,9 @@ describe('Tests for create-model', function () {
   })
 
   describe('model pullStream method', function () {
-    let callbackSpy
     let getStreamSpy
     beforeEach(function () {
-      callbackSpy = sinon.spy()
-      getStreamSpy = sinon.stub().resolves(new Readable())
+      getStreamSpy = sinon.stub().resolves(new Readable({ read () { } }))
       providerMock.Model.prototype.getStream = getStreamSpy
     })
 
@@ -548,55 +546,61 @@ describe('Tests for create-model', function () {
       providerMock.Model.prototype.getStream = undefined
     })
 
-    it('should call callback with result of getStream', async function () {
+    it('should resolve with result of getStream', async function () {
       const model = createModel({ ProviderModel: providerMock.Model, koop: koopMock })
 
-      await model.pullStream({ some: 'options' }, callbackSpy)
+      const stream = await model.pullStream({ some: 'options' })
 
       getStreamSpy.should.be.calledOnce()
-      callbackSpy.should.be.calledOnce()
-      callbackSpy.firstCall.args.length.should.equal(2)
-      should(callbackSpy.firstCall.args[0]).not.be.ok() // no error
-      callbackSpy.firstCall.args[1].should.be.an.instanceOf(Readable)
+      stream.should.be.an.instanceOf(Readable)
     })
 
-    it('should handle promise rejection from getStream', async function () {
-      getStreamSpy.rejects(new Error())
-
-      const model = createModel({ ProviderModel: providerMock.Model, koop: koopMock })
-
-      await model.pullStream({ some: 'options' }, callbackSpy)
-
-      getStreamSpy.should.be.calledOnce()
-      callbackSpy.should.be.calledOnce()
-      callbackSpy.firstCall.args.length.should.equal(1)
-      callbackSpy.firstCall.args[0].should.be.an.Error()
-    })
-
-    it('should handle promise rejection from "before" method', async function () {
-      const beforeSpy = sinon.stub().callsFake(cb => cb(new Error()))
+    it('should call "before" before getStream', async function () {
+      const beforeSpy = sinon.stub().callsFake((_, cb) => cb())
 
       const model = createModel({ ProviderModel: providerMock.Model, koop: koopMock }, { before: beforeSpy })
 
-      await model.pullStream({ some: 'options' }, callbackSpy)
+      await model.pullStream({ some: 'options' })
 
       beforeSpy.should.be.calledOnce()
-      callbackSpy.should.be.calledOnce()
-      getStreamSpy.should.not.be.calledOnce()
-      callbackSpy.firstCall.args.length.should.equal(1)
-      callbackSpy.firstCall.args[0].should.be.an.Error()
+      should(beforeSpy.calledBefore(getStreamSpy)).be.ok()
+      getStreamSpy.should.be.calledOnce()
     })
 
-    it('should throw an error if the getStream() function is not implemented', function () {
+    it.only('should invoke "after" when stream is finished', async function () {
+      const readable = new Readable({ read () {} })
+      getStreamSpy.resolves(readable)
+
+      const afterSpy = sinon.stub().callsFake((_, _2, cb) => {
+        cb()
+      })
+
+      const model = createModel({ ProviderModel: providerMock.Model, koop: koopMock })
+
+      const stream = await model.pullStream({ some: 'options' })
+
+      afterSpy.should.not.be.called()
+
+      stream.push('foo')
+      stream.push('bar')
+      stream.push(null)
+
+      stream.on('end', () => {
+        afterSpy.should.be.calledOnce()
+      })
+    })
+
+    it('should reject if the getStream() function is not implemented', async function () {
       providerMock.Model.prototype.getStream = undefined // no getStream function
 
       const model = createModel({ ProviderModel: providerMock.Model, koop: koopMock })
 
-      model.pullStream({ some: 'options' }, callbackSpy)
-
-      callbackSpy.should.be.calledOnce()
-      callbackSpy.firstCall.args.length.should.equal(1)
-      callbackSpy.firstCall.args[0].should.be.an.Error()
+      try {
+        await model.pullStream({ some: 'options' })
+        should.fail()
+      } catch (err) {
+        err.should.be.an.Error()
+      }
     })
   })
 })
