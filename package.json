@@ -67,7 +67,9 @@
   },
   "scripts": {
     "release": "gh-release",
-    "test": "standard && mocha test --recursive -t 5000"
+    "test": "standard && mocha test --recursive -t 5000",
+    "preversion": "npm test",
+    "postversion": "npm publish && git push origin --all; git push origin --tags"
   },
   "standard": {
     "globals": [
