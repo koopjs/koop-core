@@ -1,12 +1,16 @@
 # Koop
 
-> Transform, query, & download geospatial data on the web.  See [koopjs.github.io](https://koopjs.github.io) for details.
+## DEPRECATED - now migrated to a package in the [Koop monorepo](https://github.com/koopjs/koop/).  Update any `npm` usage to `@koopjs/koop-core`.
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 [![npm version][npm-img]][npm-url]
 [![build status][travis-img]][travis-url]
 [![js-standard-style][standard-img]][standard-url]
 [![Greenkeeper badge](https://badges.greenkeeper.io/koopjs/koop-core.svg)](https://greenkeeper.io/)
 
+<br>
+
+> Transform, query, & download geospatial data on the web.  See [koopjs.github.io](https://koopjs.github.io) for details.
 **Note: Koop 5.0 was just released and it no longer supports versions of Node.js older than 12. All plugins written for 3.x should work with Koop 5.x.**
 
 This is the core code for Koop.
