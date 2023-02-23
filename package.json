@@ -47,7 +47,7 @@
     "should-sinon": "0.0.6",
     "sinon": "^9.0.2",
     "standard": "^14.3.1",
-    "supertest": "^4.0.2"
+    "supertest": "^6.0.0"
   },
   "homepage": "https://github.com/koopjs/koop-core",
   "keywords": [
