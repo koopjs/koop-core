@@ -40,8 +40,8 @@
   },
   "devDependencies": {
     "gh-release": "^4.0.0",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.1.7",
+    "husky": "^5.0.0",
+    "lint-staged": "^11.0.0",
     "mocha": "^10.2.0",
     "should": "^13.2.3",
     "should-sinon": "0.0.6",
