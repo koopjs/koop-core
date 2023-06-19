@@ -39,7 +39,7 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "gh-release": "^4.0.0",
+    "gh-release": "^7.0.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.1.7",
     "mocha": "^10.2.0",
