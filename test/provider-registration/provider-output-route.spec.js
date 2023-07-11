@@ -17,7 +17,7 @@ describe('Tests for ProviderOutputRoute', function () {
         outputs: [mockOutputPlugin],
         cache: {
           retrieve: () => {},
-          upsert: () => {}
+          insert: () => {}
         }
       }
     })

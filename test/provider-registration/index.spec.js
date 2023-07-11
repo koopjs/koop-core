@@ -17,7 +17,7 @@ describe('Tests for Provider', function () {
       outputs: [mockOutputPlugin],
       cache: {
         retrieve: () => {},
-        upsert: () => {}
+        insert: () => {}
       }
     }
     const providerRegistration = ProviderRegistration.create({ koop: koopMock, provider: { ...mockProviderPlugin, hosts: true } })

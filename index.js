@@ -7,7 +7,6 @@ const compression = require('compression')
 const pkg = require('./package.json')
 const Cache = require('@koopjs/cache-memory')
 const Logger = require('@koopjs/logger')
-const datasetsProvider = require('./lib/datasets')
 const ProviderRegistration = require('./lib/provider-registration')
 const middleware = require('./lib/middleware')
 const Events = require('events')
@@ -30,7 +29,6 @@ function Koop (config) {
   this.outputs = []
   this.register(geoservices)
   this.register(LocalFS)
-  this.register(datasetsProvider)
 
   this.server
     .on('mount', () => {

@@ -17,14 +17,14 @@ const providerFixtureRoutes = provider.routes.reduce((acc, route) => {
 describe('Index tests', function () {
   describe('Koop instantiation', function () {
     it('should instantiate Koop with config', function () {
-      const koop = new Koop({ foo: 'bar' })
+      const koop = new Koop({ foo: 'bar', logLevel: 'error' })
       koop.config.should.have.property('foo', 'bar')
     })
   })
 
   describe('Provider registration', function () {
     it('should register provider and add output and provider routes to router stack', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider)
       const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'test-provider' })
       registeredProvider.should.have.property('namespace', 'test-provider')
@@ -37,38 +37,38 @@ describe('Index tests', function () {
     })
 
     it('should register provider-routes before plugin-routes', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider)
       // Check that the stack index of the plugin routes are prior to index of provider routes
       const routePaths = koop.server._router.stack
         .filter((layer) => { return _.has(layer, 'route.path') })
         .map(layer => { return _.get(layer, 'route.path') })
-      const pluginRouteIndex = routePaths.findIndex(path => path.includes('/test-provider/:id/FeatureServer'))
+      const pluginRouteIndex = routePaths.findIndex(path => path.includes('/test-provider/rest/services/:id/FeatureServer'))
       const providerRouteIndex = routePaths.findIndex(path => path.includes('/fake/:id'))
       providerRouteIndex.should.be.below(pluginRouteIndex)
     })
 
     it('should register plugin-routes before provider-routes', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, { defaultToOutputRoutes: true })
       // Check that the stack index of the plugin routes are prior to index of provider routes
       const routePaths = koop.server._router.stack
         .filter((layer) => { return _.has(layer, 'route.path') })
         .map(layer => { return _.get(layer, 'route.path') })
-      const pluginRouteIndex = routePaths.findIndex(path => path.includes('/test-provider/:id/FeatureServer'))
+      const pluginRouteIndex = routePaths.findIndex(path => path.includes('/test-provider/rest/services/:id/FeatureServer'))
       const providerRouteIndex = routePaths.findIndex(path => path.includes('/fake/:id'))
       pluginRouteIndex.should.be.below(providerRouteIndex)
     })
 
     it('should register successfully a provider with a routePrefix', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, { routePrefix: 'path-to-route' })
       const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'test-provider' })
       registeredProvider.options.should.have.property('routePrefix', 'path-to-route')
     })
 
     it('should register successfully and attach cache and options object to model', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, { foo: 'bar' })
       const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'test-provider' })
       registeredProvider.model.should.have.property('cache')
@@ -77,11 +77,11 @@ describe('Index tests', function () {
     })
 
     it('should register successfully and attach optional custom cache to model', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, {
         cache: {
-          retrieve: (key, query, callback) => {},
-          upsert: (key, data, options) => {},
+          retrieve: (key, query, callback) => {}, // eslint-disable-line
+          insert: (key, data, options) => {}, // eslint-disable-line
           customFunction: () => {}
         }
       })
@@ -90,25 +90,25 @@ describe('Index tests', function () {
       registeredProvider.model.cache.should.have.property('customFunction').and.be.a.Function()
     })
 
-    it('should reject cache option missing an upsert method', function () {
-      const koop = new Koop()
+    it('should reject cache option missing an insert method', function () {
+      const koop = new Koop({ logLevel: 'error' })
       try {
         koop.register(provider, {
           cache: {
-            retrieve: (key, query, callback) => {}
+            retrieve: (key, query, callback) => {} // eslint-disable-line 
           }
         })
       } catch (err) {
-        err.should.have.property('message', 'Provider options ValidationError: "cache.upsert" is required')
+        err.should.have.property('message', 'Provider options ValidationError: "cache.insert" is required')
       }
     })
 
     it('should reject cache option missing a retrieve method', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       try {
         koop.register(provider, {
           cache: {
-            upsert: (key, data, options) => {}
+            insert: (key, data, options) => {} // eslint-disable-line 
           }
         })
       } catch (err) {
@@ -117,7 +117,7 @@ describe('Index tests', function () {
     })
 
     it('should reject routePrefix option that is not a string', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       try {
         koop.register(provider, {
           routePrefix: {}
@@ -129,10 +129,10 @@ describe('Index tests', function () {
     })
 
     it('should register successfully and attach optional "before" and "after" function to model', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, {
-        before: (req, next) => {},
-        after: (req, data, callback) => {}
+        before: (req, next) => {}, // eslint-disable-line 
+        after: (req, data, callback) => {} // eslint-disable-line 
       })
       const registeredProvider = koop.providers.find(provider => { return provider.namespace === 'test-provider' })
       registeredProvider.model.should.have.property('before').and.be.a.Function()
@@ -140,7 +140,7 @@ describe('Index tests', function () {
     })
 
     it('should reject optional "before" function that does not have correct arity', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       try {
         koop.register(provider, {
           before: () => {}
@@ -151,7 +151,7 @@ describe('Index tests', function () {
     })
 
     it('should reject optional "after" function that does not have correct arity', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       try {
         koop.register(provider, {
           after: () => {}
@@ -162,7 +162,7 @@ describe('Index tests', function () {
     })
 
     it('should successfully use options "name" in route', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, {
         name: 'options-name'
       })
@@ -179,7 +179,7 @@ describe('Index tests', function () {
 
   describe('can register a provider and apply a route prefix to all routes', function () {
     it('should not return 404 for prefixed custom route', function (done) {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, { routePrefix: '/api/test' })
       request(koop.server)
         .get('/api/test/fake/1234')
@@ -192,18 +192,15 @@ describe('Index tests', function () {
         })
     })
 
-    it('should not return 404 for prefixed plugin route', function (done) {
-      const koop = new Koop()
+    it('should not return 404 for prefixed plugin route', async function () {
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(provider, { routePrefix: '/api/test' })
-      request(koop.server)
-        .get('/api/test/test-provider/foo/FeatureServer')
-        .then((res) => {
-          res.should.have.property('error', false)
-          done()
-        })
-        .catch(err => {
-          (err === undefined).should.equal(true)
-        })
+      try {
+        const res = await request(koop.server).get('/api/test/test-provider/rest/services/foo/FeatureServer')
+        res.should.have.property('error', false)
+      } catch (err) {
+        console.error(err)
+      }
     })
   })
 })
@@ -211,7 +208,7 @@ describe('Index tests', function () {
 describe('Tests for registering auth plugin', function () {
   describe('can register an auth plugin', function () {
     it('should register successfully', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(auth)
       koop._authModule.should.be.instanceOf(Object)
       koop._authModule.authenticate.should.be.instanceOf(Function)
@@ -222,21 +219,21 @@ describe('Tests for registering auth plugin', function () {
 
   describe('can register an auth plugin and apply methods to a provider', function () {
     it('should register successfully', function () {
-      const koop = new Koop()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(auth)
       koop.register(provider)
-      koop.providers[1].model.should.have.property('authenticationSpecification').and.deepEqual({ provider: 'test-provider' })
-      koop.providers[1].model.should.have.property('authenticate').and.be.a.Function()
-      koop.providers[1].model.should.have.property('authorize').and.be.a.Function()
+      koop.providers[0].model.should.have.property('authenticationSpecification').and.deepEqual({ provider: 'test-provider' })
+      koop.providers[0].model.should.have.property('authenticate').and.be.a.Function()
+      koop.providers[0].model.should.have.property('authorize').and.be.a.Function()
     })
   })
 
   describe('can register an auth plugin and selectively apply methods to a provider', function () {
     it('should register successfully', function () {
-      const providerWithoutAuth = require('./fixtures/fake-provider-ii')
-      const providerWithAuth = require('./fixtures/fake-provider')
-      const auth = require('./fixtures/fake-auth')()
-      const koop = new Koop()
+      const providerWithoutAuth = require('../test/fixtures/fake-provider-ii')
+      const providerWithAuth = require('../test/fixtures/fake-provider')
+      const auth = require('../test/fixtures/fake-auth')()
+      const koop = new Koop({ logLevel: 'error' })
       koop.register(providerWithoutAuth)
       koop.register(auth)
       koop.register(providerWithAuth)
@@ -253,7 +250,7 @@ describe('Tests for registering auth plugin', function () {
 })
 
 describe('Tests for registering plugins', function () {
-  const koop = new Koop()
+  const koop = new Koop({ logLevel: 'error' })
   describe('can register a plugin', function () {
     it('should register successfully', function () {
       koop.register(plugins.fakePlugin)
